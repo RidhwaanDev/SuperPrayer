@@ -17,6 +17,11 @@
     <string name="string_asr">Asr</string>
     <string name="string_maghrib">Maghrib</string>
     <string name="string_isha">Isha</string>
+    <string name="next_prayer_header">Next prayer</string>
+
+    <string name="string_not_yet_loaded">-- --</string>
+
+
 
 
 

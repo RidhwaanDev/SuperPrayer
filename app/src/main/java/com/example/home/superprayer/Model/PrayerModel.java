@@ -17,7 +17,25 @@ public class PrayerModel {
     private String Maghrb;
     private String Isha;
 
+    public String getFajr24() {
+        return Fajr;
+    }
 
+    public String getDuhr24() {
+        return Duhr;
+    }
+
+    public String getAsr24() {
+        return Asr;
+    }
+
+    public String getMaghrb24() {
+        return Maghrb;
+    }
+
+    public String getIsha24() {
+        return Isha;
+    }
 
     public String getFajr() {
         return format12Hour(Fajr);
