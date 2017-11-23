@@ -1,6 +1,7 @@
 package com.example.home.superprayer.Fragment;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +10,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.ColorSpace;
+import android.graphics.Typeface;
+import android.hardware.usb.UsbInterface;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -20,6 +23,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationBuilderWithBuilderAccessor;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -65,11 +69,17 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
             mAsrText,
             mMaghrebText,
             mIshaText;
+
+    private TextView mNextPrayertv;
+
     private ProgressBar mDownloadProgress;
-    private CircularProgressBar mNextPrayerProgress;
+    private ProgressBar mPrayerProgress;
 
     private enum CurrentPrayer {FAJR,DUHR,ASR,MAGHRIB,ISHA,END}
     private CurrentPrayer eNextPrayer;
+    private long mNextPrayer;
+
+    private StringBuilder mNextPrayerBuilder;
 
 
 
@@ -78,19 +88,22 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_times_layout,container,false);
 
+        mNextPrayerBuilder = new StringBuilder();
 
 
+        mFajrText =  v.findViewById(R.id.fajr_time_tv);
+        mDuhrText =  v.findViewById(R.id.duhr_time_tv);
+        mAsrText =  v.findViewById(R.id.asr_time_tv);
+        mMaghrebText =  v.findViewById(R.id.maghrib_time_tv);
+        mIshaText =  v.findViewById(R.id.isha_time_tv);
 
-        mFajrText = (TextView) v.findViewById(R.id.fajr_time_tv);
-        mDuhrText = (TextView) v.findViewById(R.id.duhr_time_tv);
-        mAsrText = (TextView)  v.findViewById(R.id.asr_time_tv);
-        mMaghrebText = (TextView) v.findViewById(R.id.maghrib_time_tv);
-        mIshaText = (TextView) v.findViewById(R.id.isha_time_tv);
+        mNextPrayertv = v.findViewById(R.id.tv_next_prayer);
 
         mDownloadProgress = (ProgressBar) v.findViewById(R.id.download_not_finish_progress);
         mDownloadProgress.setVisibility(View.VISIBLE);
 
-        mNextPrayerProgress = (CircularProgressBar) v.findViewById(R.id.prgb_progress_until_next_prayer);
+        mPrayerProgress = v.findViewById(R.id.progressUntilNextPrayer);
+
 
         getActivity().registerReceiver(networkReciever,new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         mNetWorkQueue = NetworkQueue.getInstance(getActivity());
@@ -108,13 +121,13 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         return v;
     }
 
+
     @Override
     public void onDownloadedData(PrayerModel model) {
 
         if(model != null){
             mDownloadProgress.setVisibility(View.GONE);
         }
-        mNextPrayerProgress.setProgressWithAnimation(65, 3200);
 
         SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editPrefs = prefs.edit();
@@ -127,17 +140,29 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         eNextPrayer = getCurrentPrayer(model);
         switch (eNextPrayer){
             case FAJR:
+                mFajrText.setTypeface(mFajrText.getTypeface(), Typeface.BOLD);
                 Log.d("PRAYER", "FAJR");
+                break;
             case DUHR:
+                mDuhrText.setTypeface(mDuhrText.getTypeface(), Typeface.BOLD);
                 Log.d("PRAYER", "DUHR");
+                break;
             case ASR:
+                mAsrText.setTypeface(mAsrText.getTypeface(),Typeface.BOLD);
                 Log.d("PRAYER", "ASR");
+                break;
             case MAGHRIB:
+                mMaghrebText.setTypeface(mMaghrebText.getTypeface(),Typeface.BOLD);
                 Log.d("PRAYER", "MAGHRIB");
+                break;
             case ISHA:
+                mIshaText.setTypeface(mIshaText.getTypeface(),Typeface.BOLD);
                 Log.d("PRAYER", "ISHA");
+                break;
             case END:
+                mFajrText.setTypeface(mFajrText.getTypeface(), Typeface.BOLD);
                 Log.d("PRAYER", "END");
+                default:
 
         }
 
@@ -147,6 +172,8 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
              mAsrText.setText(model.getAsr());
              mMaghrebText.setText(model.getMaghrb());
              mIshaText.setText(model.getIsha());
+
+
     }
 
     private CurrentPrayer getCurrentPrayer(PrayerModel model){
@@ -157,6 +184,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         int maghrib = convertPrayertoInt(model.getMaghrb24());
         int isha = convertPrayertoInt(model.getIsha24());
 
+
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         Date currentDate = new Date();
         String stringTime = sdf.format(currentDate);
@@ -164,30 +192,61 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
         int absoluteNumberTime = convertPrayertoInt(stringTime);
         int times_array[] = {fajr,duhr,asr,maghrib,isha,absoluteNumberTime};
+
         Arrays.sort(times_array);
+
         for (int i = 0; i < times_array.length; i++) {
+
             Log.d("ARRAY TAG" , "  " + times_array[i]);
+
             if(times_array[i] == absoluteNumberTime){
+
+                Log.d("LOOP TAG",  " Time : " + times_array[i] + "  current time  " + absoluteNumberTime + "  Next prayer imes  " + times_array[i + 1] );
+
                    if(i == 5){
                     return eNextPrayer.END;
                   }
                     int nextPrayer = times_array[i + 1];
 
                     if(nextPrayer == fajr){
-
+                        mNextPrayer = timeUntilNextPrayer(model.getIsha24(),stringTime,model.getFajr24());
+                        mNextPrayerBuilder.append("Fajr in ");
                         return eNextPrayer.FAJR;
                     }
                     if(nextPrayer == duhr){
-                    return eNextPrayer.DUHR;
+                      mNextPrayer = timeUntilNextPrayer(model.getFajr24(),stringTime,model.getDuhr24());
+                        mNextPrayerBuilder.append("Duhr in ");
+
+                        return eNextPrayer.DUHR;
                     }
                     if(nextPrayer == asr){
+                        mNextPrayer = timeUntilNextPrayer(model.getDuhr24(),stringTime,model.getAsr24());
+
+                        if(mNextPrayer > 60){
+                            String formatNextPrayer = "1 hour and " + String.valueOf(mNextPrayer - 60) +"minutes";
+                            mNextPrayertv.setText(formatNextPrayer);
+                        } else {
+                            mNextPrayertv.setText("Asr in" + " " + String.valueOf(mNextPrayer) + " " + "minutes");
+
+                        }
+
+                        Log.d("Next prayer tag", " Asr is next:"+ " " + asr);
                     return eNextPrayer.ASR;
-                }
+                    }
                     if(nextPrayer == maghrib){
-                    return eNextPrayer.MAGHRIB;
-                  }
+                       mNextPrayer = timeUntilNextPrayer(model.getAsr24(),stringTime,model.getMaghrb24());
+                        mNextPrayerBuilder.append("Maghrib in ");
+
+                        Log.d("Next prayer tag", " Maghrib is next:"+ " " + maghrib);
+                        return eNextPrayer.MAGHRIB;
+                    }
                     if(nextPrayer == isha){
-                    return eNextPrayer.ISHA;
+                        mNextPrayer = timeUntilNextPrayer(model.getMaghrb24(),stringTime,model.getIsha24());
+                        mNextPrayerBuilder.append("Isha in ");
+
+                        Log.d("Next prayer tag", " Isha is next:"+ " " + isha);
+
+                        return eNextPrayer.ISHA;
                 }
             }
 
@@ -195,22 +254,51 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
         return null;
 
-
-
         //  Log.d("CURRENT TIME" , " Time is  " + stringTime);
         //   Log.d("CURRENT TIME" , " Time is  " + absoluteNumberTime);
     //  Log.d("Prayer Time Stamps", "Fajr" +  "\t" + fajr + "\n" + "Duhr" + "\t" + duhr + "\n" + "Asr" + "\t" + asr +" \n" + "Maghrib" +"\t" +maghrib + " \n " +"isha" + "\n" + isha);
     }
 
-    private int convertPrayertoInt(String time){
+    private long timeUntilNextPrayer(String lastPrayer , String currentTime, String nextPrayerTime){
 
-            String[] timeSplit = time.split(":");
-            String concat = (timeSplit[0] + timeSplit[1]);
-            int absoluteTime = Integer.parseInt(concat);
+        SimpleDateFormat sdf = new SimpleDateFormat("H:mm");
+        try {
 
-            return absoluteTime;
+            Date date1 = sdf.parse(lastPrayer);
+            Date date2 = sdf.parse(nextPrayerTime);
+            Date currentDate = sdf.parse(currentTime);
+
+            long diff =  (date2.getTime() - date1.getTime()) / 1000;
+            long diff2 = (date2.getTime() - currentDate.getTime()) / 1000;
+            Log.d("NEXT PRAYER TIME CALC" ,  "   " + lastPrayer + "  " + nextPrayerTime + "  " + diff);
+            Log.d("NEXT PRAYER TIME CALC" ,  "   " + lastPrayer + "  " + nextPrayerTime + "  " + diff2);
+            double difference = (double)diff;
+            double difference2 = (double)diff2;
+            double absoluteDiff = (difference2/difference) * 100;
+            mPrayerProgress.setProgress((int)(100 - absoluteDiff));
+            Log.d("Progress Tag", "  " +" diff1 " + " " + difference + "  " + difference2 + " "  + (difference2/difference) * 100);
+
+
+            //convert from seconds to minutes
+            return diff2 / 60;
+
+        }catch (ParseException e){
+            e.printStackTrace();
+        }
+
+        return 0;
 
     }
+
+    private int convertPrayertoInt(String time) {
+
+        String[] timeSplit = time.split(":");
+        String concat = (timeSplit[0] + timeSplit[1]);
+        int absoluteTime = Integer.parseInt(concat);
+
+        return absoluteTime;
+    }
+
 
     public void updateTimes(){
 

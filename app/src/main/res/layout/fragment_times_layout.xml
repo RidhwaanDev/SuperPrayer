@@ -317,22 +317,22 @@
                 android:id="@+id/tv_next_prayer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text = "Asr in 10 minutes"
                 android:textSize="20dp"
                 android:textStyle="bold"
                 android:textColor="@color/colorMaghrib"
                 />
 
-            <com.mikhaellopez.circularprogressbar.CircularProgressBar
-                android:id="@+id/prgb_progress_until_next_prayer"
+            <ProgressBar
+                android:id="@+id/progressUntilNextPrayer"
+                style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
-                android:layout_height="136dp"
-                android:layout_gravity="center"
-                android:layout_marginBottom="32dp"
-                app:cpb_background_progressbar_color="@color/backgroundProgressColor"
-                app:cpb_background_progressbar_width="8dp"
-                app:cpb_progressbar_color="@color/colorPrimary"
-                app:cpb_progressbar_width="8dp" />
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                android:layout_marginBottom="12dp"
+                android:layout_marginTop="8dp"
+               />
+
 
         </LinearLayout>
 
