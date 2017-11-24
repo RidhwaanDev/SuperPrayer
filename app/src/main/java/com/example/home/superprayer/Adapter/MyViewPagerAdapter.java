@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.util.Log;
 
+import com.example.home.superprayer.Fragment.LogFragment;
 import com.example.home.superprayer.Fragment.TimesFragment;
 
 /**
@@ -30,7 +31,7 @@ public class MyViewPagerAdapter extends FragmentPagerAdapter{
             case 1:
                 Log.d("TAG", "position 2");
 
-                return new TimesFragment();
+                return new LogFragment();
             case 2:
                 Log.d("TAG", "position 2");
 

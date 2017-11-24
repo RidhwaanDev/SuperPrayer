@@ -1,5 +1,6 @@
 package com.example.home.superprayer.Fragment;
 
+import android.app.Activity;
 import android.app.IntentService;
 import android.app.Notification;
 import android.content.BroadcastReceiver;
@@ -23,6 +24,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NotificationBuilderWithBuilderAccessor;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -79,16 +81,13 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
     private CurrentPrayer eNextPrayer;
     private long mNextPrayer;
 
-    private StringBuilder mNextPrayerBuilder;
 
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_times_layout,container,false);
-
-        mNextPrayerBuilder = new StringBuilder();
+       View v = inflater.inflate(R.layout.fragment_times_layout,container,false);
 
 
         mFajrText =  v.findViewById(R.id.fajr_time_tv);
@@ -128,14 +127,18 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         if(model != null){
             mDownloadProgress.setVisibility(View.GONE);
         }
+        if(isAdded()) {
+            SharedPreferences prefs = getActivity() .getPreferences(Context.MODE_PRIVATE);
 
-        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editPrefs = prefs.edit();
+            SharedPreferences.Editor editPrefs = prefs.edit();
 
-        Gson gson = new Gson();
-        String packagedText = gson.toJson(model);
-        editPrefs.putString(getString(R.string.shared_prefs_key),packagedText);
-        editPrefs.commit();
+            Gson gson = new Gson();
+            String packagedText = gson.toJson(model);
+            editPrefs.putString(getString(R.string.shared_prefs_key),packagedText);
+            editPrefs.commit();
+
+
+        }
 
         eNextPrayer = getCurrentPrayer(model);
         switch (eNextPrayer){
@@ -201,7 +204,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
             if(times_array[i] == absoluteNumberTime){
 
-                Log.d("LOOP TAG",  " Time : " + times_array[i] + "  current time  " + absoluteNumberTime + "  Next prayer imes  " + times_array[i + 1] );
+             //   Log.d("LOOP TAG",  " Time : " + times_array[i] + "  current time  " + absoluteNumberTime + "  Next prayer imes  " + times_array[i + 1] );
 
                    if(i == 5){
                     return eNextPrayer.END;
@@ -210,12 +213,30 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
                     if(nextPrayer == fajr){
                         mNextPrayer = timeUntilNextPrayer(model.getIsha24(),stringTime,model.getFajr24());
-                        mNextPrayerBuilder.append("Fajr in ");
+
+
+                        if(mNextPrayer > 60){
+                            String formatNextPrayer = "1 hour and " + String.valueOf(mNextPrayer - 60) +"minutes";
+                            mNextPrayertv.setText(formatNextPrayer);
+                        } else {
+                            mNextPrayertv.setText("Fajr in" + " " + String.valueOf(mNextPrayer) + " " + "minutes");
+
+                        }
+
+
                         return eNextPrayer.FAJR;
                     }
                     if(nextPrayer == duhr){
                       mNextPrayer = timeUntilNextPrayer(model.getFajr24(),stringTime,model.getDuhr24());
-                        mNextPrayerBuilder.append("Duhr in ");
+
+                        if(mNextPrayer > 60){
+                            String formatNextPrayer = "1 hour and " + String.valueOf(mNextPrayer - 60) +"minutes";
+                            mNextPrayertv.setText(formatNextPrayer);
+                        } else {
+                            mNextPrayertv.setText("Duhr in" + " " + String.valueOf(mNextPrayer) + " " + "minutes");
+
+                        }
+
 
                         return eNextPrayer.DUHR;
                     }
@@ -235,14 +256,32 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
                     }
                     if(nextPrayer == maghrib){
                        mNextPrayer = timeUntilNextPrayer(model.getAsr24(),stringTime,model.getMaghrb24());
-                        mNextPrayerBuilder.append("Maghrib in ");
+
+
+                        if(mNextPrayer > 60){
+                            String formatNextPrayer = "1 hour and " + String.valueOf(mNextPrayer - 60) +"minutes";
+                            mNextPrayertv.setText(formatNextPrayer);
+                        } else {
+                            mNextPrayertv.setText("Maghrib in" + " " + String.valueOf(mNextPrayer) + " " + "minutes");
+
+                        }
+
 
                         Log.d("Next prayer tag", " Maghrib is next:"+ " " + maghrib);
                         return eNextPrayer.MAGHRIB;
                     }
                     if(nextPrayer == isha){
                         mNextPrayer = timeUntilNextPrayer(model.getMaghrb24(),stringTime,model.getIsha24());
-                        mNextPrayerBuilder.append("Isha in ");
+
+
+                        if(mNextPrayer > 60){
+                            String formatNextPrayer = "1 hour and " + String.valueOf(mNextPrayer - 60) +"minutes";
+                            mNextPrayertv.setText(formatNextPrayer);
+                        } else {
+                            mNextPrayertv.setText("Isha in" + " " + String.valueOf(mNextPrayer) + " " + "minutes");
+
+                        }
+
 
                         Log.d("Next prayer tag", " Isha is next:"+ " " + isha);
 
@@ -419,4 +458,13 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         super.onPause();
         getActivity().unregisterReceiver(networkReciever);
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mNetWorkQueue = null;
+        mLocationClient = null;
+    }
+
+
 }
