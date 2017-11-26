@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/prayer_drawer_item"
+        android:title="Prayer"
+        android:icon="@drawable/ic_prayer_item_menu"
+        />
+    <item
+        android:id="@+id/settings_drawer_item"
+        android:title="Settings"
+        android:icon="@drawable/ic_settings_black_24dp"
+        />
+    <item
+        android:id="@+id/donate_drawer_item"
+        android:title="Donate"
+        android:icon="@drawable/ic_donate_menu_item"
+        />
+    <item
+        android:id="@+id/contact_drawer_item"
+        android:title="Contact"
+        android:icon="@drawable/ic_contact_menu_item"
+        />
+    <item
+        android:id="@+id/about_drawer_item"
+        android:title="About"
+        android:icon="@drawable/ic_about_item_menu"
+        />
+
+</menu>
