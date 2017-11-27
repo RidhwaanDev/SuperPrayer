@@ -216,7 +216,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
 
                         if(mNextPrayer > 60){
-                            String formatNextPrayer = "1 hour and " + String.valueOf(mNextPrayer - 60) +"minutes";
+                            String formatNextPrayer = "Fajr in 1 hour and " + String.valueOf(mNextPrayer - 60) +" minutes";
                             mNextPrayertv.setText(formatNextPrayer);
                         } else {
                             mNextPrayertv.setText("Fajr in" + " " + String.valueOf(mNextPrayer) + " " + "minutes");
@@ -230,7 +230,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
                       mNextPrayer = timeUntilNextPrayer(model.getFajr24(),stringTime,model.getDuhr24());
 
                         if(mNextPrayer > 60){
-                            String formatNextPrayer = "1 hour and " + String.valueOf(mNextPrayer - 60) +"minutes";
+                            String formatNextPrayer = "Duhr in 1 hour and " + String.valueOf(mNextPrayer - 60) +" minutes";
                             mNextPrayertv.setText(formatNextPrayer);
                         } else {
                             mNextPrayertv.setText("Duhr in" + " " + String.valueOf(mNextPrayer) + " " + "minutes");
@@ -244,7 +244,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
                         mNextPrayer = timeUntilNextPrayer(model.getDuhr24(),stringTime,model.getAsr24());
 
                         if(mNextPrayer > 60){
-                            String formatNextPrayer = "1 hour and " + String.valueOf(mNextPrayer - 60) +"minutes";
+                            String formatNextPrayer = "Asr in 1 hour and " + String.valueOf(mNextPrayer - 60) +" minutes";
                             mNextPrayertv.setText(formatNextPrayer);
                         } else {
                             mNextPrayertv.setText("Asr in" + " " + String.valueOf(mNextPrayer) + " " + "minutes");
@@ -259,7 +259,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
 
                         if(mNextPrayer > 60){
-                            String formatNextPrayer = "1 hour and " + String.valueOf(mNextPrayer - 60) +"minutes";
+                            String formatNextPrayer = "Mahghrib in 1 hour and " + String.valueOf(mNextPrayer - 60) +" minutes";
                             mNextPrayertv.setText(formatNextPrayer);
                         } else {
                             mNextPrayertv.setText("Maghrib in" + " " + String.valueOf(mNextPrayer) + " " + "minutes");
@@ -275,7 +275,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
 
                         if(mNextPrayer > 60){
-                            String formatNextPrayer = "1 hour and " + String.valueOf(mNextPrayer - 60) +"minutes";
+                            String formatNextPrayer = "Isha in 1 hour and " + String.valueOf(mNextPrayer - 60) +" minutes";
                             mNextPrayertv.setText(formatNextPrayer);
                         } else {
                             mNextPrayertv.setText("Isha in" + " " + String.valueOf(mNextPrayer) + " " + "minutes");
@@ -353,8 +353,10 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
         Log.d("SHAREDPREFS LAT LNG", "  LAT  " +  lat + " LNG  " + lng);
 
+        String requestPath = NetworkRequest.BuildRequest(lat,lng);
 
-        Uri.Builder builder = new Uri.Builder();
+
+      /*  Uri.Builder builder = new Uri.Builder();
          builder.scheme("http")
                 .authority(NetworkPaths.AUTHORITY_PATH)
                 .appendPath("timings")
@@ -365,11 +367,11 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
                 .build();
 
         Log.d("URI BUILDER", "  final path " +   "  " + builder.toString());
-
+*/
 
         NetworkRequest requestTimes = new NetworkRequest(getActivity());
         requestTimes.mResponse = this;
-        requestTimes.requestPrayerTimeSingle(builder.toString());
+        requestTimes.requestPrayerTimeSingle(requestPath);
     }
 
     public void reloadTimes(){

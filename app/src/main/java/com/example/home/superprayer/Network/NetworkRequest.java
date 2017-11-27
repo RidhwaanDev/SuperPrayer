@@ -3,6 +3,7 @@ package com.example.home.superprayer.Network;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.util.Log;
 
 import com.android.volley.NetworkResponse;
@@ -86,6 +87,25 @@ public class NetworkRequest {
         mNetworkQueue.addJSONRequest(mJsonRequest);
         return null;
 
+    }
+
+    public static String BuildRequest(double lat, double lng){
+
+        //current time stamp
+        Long tsLong = System.currentTimeMillis()/1000;
+        String ts = tsLong.toString();
+
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("http")
+                .authority(NetworkPaths.AUTHORITY_PATH)
+                .appendPath("timings")
+                .appendPath(ts)
+                .appendQueryParameter("latitude",String.valueOf(lat))
+                .appendQueryParameter("longitude", String.valueOf(lng))
+                .appendQueryParameter("school","1")
+                .build();
+
+        return builder.toString();
     }
 
 }
