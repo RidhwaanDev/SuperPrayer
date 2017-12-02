@@ -1,14 +1,19 @@
 package com.example.home.superprayer.Fragment;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.IntentService;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.ColorSpace;
 import android.graphics.Typeface;
@@ -26,6 +31,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NotificationBuilderWithBuilderAccessor;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,6 +42,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.home.superprayer.DashboardActivity;
 import com.example.home.superprayer.Manifest;
 import com.example.home.superprayer.Model.PrayerModel;
 import com.example.home.superprayer.Network.NetWorkResponse;
@@ -50,6 +58,7 @@ import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
 import org.w3c.dom.Text;
 
+import java.lang.annotation.Target;
 import java.security.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -65,7 +74,12 @@ import java.util.Date;
 public class TimesFragment extends Fragment implements NetWorkResponse {
     private NetworkQueue mNetWorkQueue;
     private FusedLocationProviderClient mLocationClient;
+
     private static final int MY_REQUEST_LOCATION_PERMISSION = 1000;
+    private static final String MY_NOTIFICATION_CHANNEL_ID = "my_channel_id_0001";
+
+    private static final int MY_NOTIFCATION_ID = 0;
+
     private TextView mFajrText,
             mDuhrText,
             mAsrText,
@@ -82,12 +96,12 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
     private long mNextPrayer;
 
 
-
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
        View v = inflater.inflate(R.layout.fragment_times_layout,container,false);
+
+        fireNotifcation("Fajr",30);
 
 
         mFajrText =  v.findViewById(R.id.fajr_time_tv);
@@ -102,6 +116,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         mDownloadProgress.setVisibility(View.VISIBLE);
 
         mPrayerProgress = v.findViewById(R.id.progressUntilNextPrayer);
+
 
 
         getActivity().registerReceiver(networkReciever,new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
@@ -119,6 +134,8 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
         return v;
     }
+
+
 
 
     @Override
@@ -213,6 +230,9 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
                     if(nextPrayer == fajr){
                         mNextPrayer = timeUntilNextPrayer(model.getIsha24(),stringTime,model.getFajr24());
+                        if(mNextPrayer <= 30){
+                            fireNotifcation("Fajr",30);
+                        }
 
 
                         if(mNextPrayer > 60){
@@ -228,6 +248,8 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
                     }
                     if(nextPrayer == duhr){
                       mNextPrayer = timeUntilNextPrayer(model.getFajr24(),stringTime,model.getDuhr24());
+                        fireNotifcation("Duhr",30);
+
 
                         if(mNextPrayer > 60){
                             String formatNextPrayer = "Duhr in 1 hour and " + String.valueOf(mNextPrayer - 60) +" minutes";
@@ -242,6 +264,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
                     }
                     if(nextPrayer == asr){
                         mNextPrayer = timeUntilNextPrayer(model.getDuhr24(),stringTime,model.getAsr24());
+                        fireNotifcation("Asr",30);
 
                         if(mNextPrayer > 60){
                             String formatNextPrayer = "Asr in 1 hour and " + String.valueOf(mNextPrayer - 60) +" minutes";
@@ -256,6 +279,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
                     }
                     if(nextPrayer == maghrib){
                        mNextPrayer = timeUntilNextPrayer(model.getAsr24(),stringTime,model.getMaghrb24());
+                        fireNotifcation("Maghrib",30);
 
 
                         if(mNextPrayer > 60){
@@ -272,6 +296,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
                     }
                     if(nextPrayer == isha){
                         mNextPrayer = timeUntilNextPrayer(model.getMaghrb24(),stringTime,model.getIsha24());
+                        fireNotifcation("Isha",30);
 
 
                         if(mNextPrayer > 60){
@@ -325,8 +350,35 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
             e.printStackTrace();
         }
 
+
         return 0;
 
+    }
+    private void fireNotifcation(String prayer, int time){
+
+        Resources resources = getResources();
+        Intent i = DashboardActivity.newInstance(getActivity());
+        PendingIntent pi = PendingIntent.getActivity(getActivity(),0,i,0);
+
+
+        NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+        int importance = NotificationManager.IMPORTANCE_HIGH;
+        NotificationChannel mChannel = new NotificationChannel(MY_NOTIFICATION_CHANNEL_ID,resources.getText(R.string.notification_channel_text),importance);
+        mChannel.enableLights(true);
+        mChannel.setLightColor(Color.RED);
+        mChannel.enableVibration(true);
+        notificationManager.createNotificationChannel(mChannel);
+
+        Notification notification = new NotificationCompat.Builder(getActivity(),MY_NOTIFICATION_CHANNEL_ID).setTicker("my_ticker_0001")
+                .setSmallIcon(R.mipmap.ic_launcher_round)
+                .setContentTitle(resources.getString(R.string.notification_title))
+                .setContentText(prayer + " " + "in" + " " + time +" " + "minutes")
+                .setAutoCancel(true)
+                .setContentIntent(pi)
+                .build();
+
+        NotificationManagerCompat manager = NotificationManagerCompat.from(getActivity());
+        manager.notify(0,notification);
     }
 
     private int convertPrayertoInt(String time) {
@@ -353,7 +405,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
         Log.d("SHAREDPREFS LAT LNG", "  LAT  " +  lat + " LNG  " + lng);
 
-        String requestPath = NetworkRequest.BuildRequest(lat,lng);
+        String requestPath = NetworkRequest.BuildRequest(lat,lng,null);
 
 
       /*  Uri.Builder builder = new Uri.Builder();

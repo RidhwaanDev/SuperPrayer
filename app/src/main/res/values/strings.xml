@@ -25,6 +25,16 @@
     <string name="close">Close</string>
 
     <string name="search_prayer_menu">Search prayer times</string>
+    <string name="search_prayer_date_menu">Search prayer time by date</string>
+    <string name="search_time">Search timings by date</string>
+
+    <string name="notification_title"> Super Prayer</string>
+    <string name="notification_channel_text"> Super Prayer Notification</string>
+
+
+
+
+
 
 
 

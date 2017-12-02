@@ -10,4 +10,12 @@
         app:showAsAction="ifRoom"
         />
 
+
+    <item
+        android:id="@+id/search_prayer_by_date_item"
+        android:title="@string/search_prayer_date_menu"
+        android:icon="@drawable/ic_month_picker"
+        app:showAsAction="ifRoom"
+        />
+
 </menu>

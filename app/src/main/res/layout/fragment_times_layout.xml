@@ -344,7 +344,7 @@
                 android:textSize="20dp"
                 android:textStyle="bold"
                 android:textColor="@color/colorMaghrib"
-                android:text="All done for today!"
+                android:text="@string/string_not_yet_loaded"
                 />
 
             <ProgressBar

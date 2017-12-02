@@ -18,6 +18,12 @@ import com.example.home.superprayer.Model.PrayerModel;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by Home on 11/6/2017.
  */
@@ -89,11 +95,31 @@ public class NetworkRequest {
 
     }
 
-    public static String BuildRequest(double lat, double lng){
+
+    public static Timestamp getTimeStampOf(){
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        try{
+
+            Date date = dateFormat.parse("12/25/2023");
+            long time = date.getTime();
+           return new Timestamp(time);
+        }catch (ParseException e){
+            e.printStackTrace();
+        }
+
+        return null;
+
+    }
+
+    public static String BuildRequest(double lat, double lng, String ts){
 
         //current time stamp
-        Long tsLong = System.currentTimeMillis()/1000;
-        String ts = tsLong.toString();
+
+        if(ts == null){
+            Long tsLong = System.currentTimeMillis()/1000;
+            ts = tsLong.toString();
+        }
+
 
         Uri.Builder builder = new Uri.Builder();
         builder.scheme("http")

@@ -1,13 +1,14 @@
 package com.example.home.superprayer;
 
 import android.app.Activity;
-import android.app.Application;
+import android.app.DatePickerDialog;
+import android.app.FragmentManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
-import android.net.sip.SipSession;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -18,28 +19,35 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.DatePicker;
 import android.widget.Toast;
 
 import com.example.home.superprayer.Adapter.MyViewPagerAdapter;
+import com.example.home.superprayer.Dialog.PrayerDateDialogFragment;
 import com.example.home.superprayer.Fragment.CompassFragment;
 import com.example.home.superprayer.Fragment.LogFragment;
-import com.example.home.superprayer.Fragment.PrayerSearchDialogFragment;
+import com.example.home.superprayer.Dialog.PrayerSearchDialogFragment;
 import com.example.home.superprayer.Fragment.TimesFragment;
+import com.example.home.superprayer.Model.PrayerDateModel;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
-import com.google.android.gms.maps.model.Dash;
-import com.google.android.gms.maps.model.LatLng;
-import com.squareup.leakcanary.LeakCanary;
 
-public class DashboardActivity extends AppCompatActivity {
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
+public class DashboardActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
 
 
     private static final int REQUEST_PLACE_AUTO_COMPLETE = 1000;
     private static final String CODE_SHOW_PRAYER_DIALOG = "SHOW PRAYER DIALOG PLEASE";
+    private static final String CODE_SHOW_PRAYER_DATE_PICKER_DIALOG = "SHOW PRAYER DATE PICKER DIALOG PLEASE";
+
 
     private ViewPager mRootViewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
@@ -100,12 +108,57 @@ public class DashboardActivity extends AppCompatActivity {
                 startSearchActivity();
                 return true;
 
+            case R.id.search_prayer_by_date_item:
+
+                DatePickerDialog dialog = createDatePickerDialog(new Date());
+                dialog.show();
+
+
+                return true;
+
 
                 default:
 
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    private DatePickerDialog createDatePickerDialog(Date mDate){
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(mDate);
+
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int month = calendar.get(Calendar.MONTH);
+        int year = calendar.get(Calendar.YEAR);
+
+
+        return new DatePickerDialog(this,R.style.DatePickerDialogCustom ,this,year,month,day);
+
+    }
+
+    @Override
+    public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
+
+        Calendar calendar = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+        long time = calendar.getTimeInMillis();
+        String timeStamp = String.valueOf(time);
+
+        PrayerDateModel model = new PrayerDateModel();
+        model.setmTime(time);
+        model.setmTimeStamp(String.valueOf(model.getmTime()));
+        model.setDay(dayOfMonth);
+        model.setMonth(monthOfYear);
+        model.setYear(year);
+
+        Log.d("onDateSet", "  TIME FLOAT" + "  " + time + "  " + " time stamp " +"  " + timeStamp);
+
+        FragmentManager fg = getFragmentManager();
+        PrayerDateDialogFragment dateDialogFragment = PrayerDateDialogFragment.newPrayerDateDialogInstance(model);
+        dateDialogFragment.show(fg,CODE_SHOW_PRAYER_DATE_PICKER_DIALOG);
+
     }
 
     @Override
@@ -208,6 +261,11 @@ public class DashboardActivity extends AppCompatActivity {
 
 
     };
+
+    public static Intent newInstance(Context c){
+       Intent i = new Intent(c,DashboardActivity.class);
+       return i;
+    }
 
 
 }

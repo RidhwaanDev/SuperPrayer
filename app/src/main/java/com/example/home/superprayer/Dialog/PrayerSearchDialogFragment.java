@@ -1,13 +1,12 @@
-package com.example.home.superprayer.Fragment;
+package com.example.home.superprayer.Dialog;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.Layout;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -18,9 +17,6 @@ import com.example.home.superprayer.Network.NetWorkResponse;
 import com.example.home.superprayer.Network.NetworkRequest;
 import com.example.home.superprayer.R;
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.maps.model.LatLng;
-
-import org.w3c.dom.Text;
 
 /**
  * Created by Home on 11/26/2017.
@@ -31,6 +27,10 @@ public class PrayerSearchDialogFragment extends DialogFragment implements NetWor
     public static final String KEY_PUT_LAT_EXTRA = "LAT_Extra";
     public static final String KEY_PUT_LNG_EXTRA = "LNG_EXTRA";
     public static final String KEY_PUT_PLACE_EXTRA = "PLACE_EXTRA";
+
+
+    public static final String KEY_PUT_LAT_FROM_SHARED = "LAT_DEFAULT";
+    public static final String KEY_PUT_LNG_FROMSHARED = "LNG_DEFAULT";
 
     private NetworkRequest mNetworkRequest;
 
@@ -62,20 +62,21 @@ public class PrayerSearchDialogFragment extends DialogFragment implements NetWor
         mDialogTitleText = v.findViewById(R.id.dialog_location_title);
 
         Bundle b = getArguments();
-
         double lat,lng;
 
-        lat = (double)b.get(KEY_PUT_LAT_EXTRA);
-        lng = (double) b.get(KEY_PUT_LNG_EXTRA);
 
-        mPlaceModel = (PrayerDialogModel) b.get(KEY_PUT_PLACE_EXTRA);
-        String placeName = mPlaceModel.getPlace().getName().toString();
+            lat = (double) b.get(KEY_PUT_LAT_EXTRA);
+            lng = (double) b.get(KEY_PUT_LNG_EXTRA);
 
-        mDialogTitleText.setText(placeName);
+            mPlaceModel = (PrayerDialogModel) b.get(KEY_PUT_PLACE_EXTRA);
+            String placeName = mPlaceModel.getPlace().getName().toString();
+
+            mDialogTitleText.setText(placeName);
 
 
-        String requestPath = NetworkRequest.BuildRequest(lat,lng);
+        String requestPath = NetworkRequest.BuildRequest(lat,lng,null);
         mNetworkRequest.requestPrayerTimeSingle(requestPath);
+
 
 
         return new AlertDialog.Builder(getActivity())

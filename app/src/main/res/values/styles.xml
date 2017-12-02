@@ -8,4 +8,14 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+
+
+
+    <style name="DatePickerDialogCustom" parent="@style/Theme.AppCompat.DayNight.Dialog">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorMaghrib</item>
+    </style>
+
+
+
 </resources>
