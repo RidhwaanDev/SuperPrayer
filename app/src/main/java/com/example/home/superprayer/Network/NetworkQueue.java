@@ -34,7 +34,6 @@ public class NetworkQueue {
 
     }
 
-
     private NetworkQueue(Context c){
         mRequestQueue = Volley.newRequestQueue(c);
         context = c;

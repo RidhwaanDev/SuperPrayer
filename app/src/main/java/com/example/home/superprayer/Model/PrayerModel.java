@@ -1,5 +1,6 @@
 package com.example.home.superprayer.Model;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -9,7 +10,7 @@ import java.util.HashMap;
  * Created by Home on 11/9/2017.
  */
 
-public class PrayerModel {
+public class PrayerModel implements Serializable {
 
     private String Fajr;
     private String Duhr;

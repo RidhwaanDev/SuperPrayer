@@ -45,6 +45,7 @@ import android.widget.Toast;
 import com.example.home.superprayer.DashboardActivity;
 import com.example.home.superprayer.Manifest;
 import com.example.home.superprayer.Model.PrayerModel;
+import com.example.home.superprayer.Network.BackgroundNetwork;
 import com.example.home.superprayer.Network.NetWorkResponse;
 import com.example.home.superprayer.Network.NetworkPaths;
 import com.example.home.superprayer.Network.NetworkQueue;
@@ -78,6 +79,11 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
     private static final int MY_REQUEST_LOCATION_PERMISSION = 1000;
     private static final String MY_NOTIFICATION_CHANNEL_ID = "my_channel_id_0001";
 
+    public static final String SHARED_PREFS_SERVICE_DATE = "shared_prefs_for_service_data";
+    public static final String KEY_NEXT_TIME_SERVICE = "next_time_for_service";
+    public static final String KEY_NEXT_PRAYER_SERVICE = "next_time_for_service";
+
+
     private static final int MY_NOTIFCATION_ID = 0;
 
     private TextView mFajrText,
@@ -95,14 +101,18 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
     private CurrentPrayer eNextPrayer;
     private long mNextPrayer;
 
+    private SharedPreferences mServicePrefs;
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
        View v = inflater.inflate(R.layout.fragment_times_layout,container,false);
 
-        fireNotifcation("Fajr",30);
+        mServicePrefs = getActivity().getApplicationContext().getSharedPreferences(SHARED_PREFS_SERVICE_DATE,Context.MODE_PRIVATE);
 
+
+        startService();
 
         mFajrText =  v.findViewById(R.id.fajr_time_tv);
         mDuhrText =  v.findViewById(R.id.duhr_time_tv);
@@ -112,7 +122,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
         mNextPrayertv = v.findViewById(R.id.tv_next_prayer);
 
-        mDownloadProgress = (ProgressBar) v.findViewById(R.id.download_not_finish_progress);
+        mDownloadProgress = v.findViewById(R.id.download_not_finish_progress);
         mDownloadProgress.setVisibility(View.VISIBLE);
 
         mPrayerProgress = v.findViewById(R.id.progressUntilNextPrayer);
@@ -144,6 +154,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         if(model != null){
             mDownloadProgress.setVisibility(View.GONE);
         }
+
         if(isAdded()) {
             SharedPreferences prefs = getActivity() .getPreferences(Context.MODE_PRIVATE);
 
@@ -196,42 +207,54 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
     }
 
+
     private CurrentPrayer getCurrentPrayer(PrayerModel model){
 
-        int fajr = convertPrayertoInt(model.getFajr24());
-        int duhr = convertPrayertoInt(model.getDuhr24());
-        int asr = convertPrayertoInt(model.getAsr24());
-        int maghrib = convertPrayertoInt(model.getMaghrb24());
-        int isha = convertPrayertoInt(model.getIsha24());
+        SharedPreferences.Editor editor = mServicePrefs.edit();
 
 
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-        Date currentDate = new Date();
-        String stringTime = sdf.format(currentDate);
+            int fajr = convertPrayertoInt(model.getFajr24());
+            int duhr = convertPrayertoInt(model.getDuhr24());
+            int asr = convertPrayertoInt(model.getAsr24());
+            int maghrib = convertPrayertoInt(model.getMaghrb24());
+            int isha = convertPrayertoInt(model.getIsha24());
 
 
-        int absoluteNumberTime = convertPrayertoInt(stringTime);
-        int times_array[] = {fajr,duhr,asr,maghrib,isha,absoluteNumberTime};
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            Date currentDate = new Date();
+            String stringTime = sdf.format(currentDate);
 
-        Arrays.sort(times_array);
 
-        for (int i = 0; i < times_array.length; i++) {
+            int absoluteNumberTime = convertPrayertoInt(stringTime);
+            int times_array[] = {fajr,duhr,asr,maghrib,isha,absoluteNumberTime};
 
-            Log.d("ARRAY TAG" , "  " + times_array[i]);
+            Arrays.sort(times_array);
 
-            if(times_array[i] == absoluteNumberTime){
+            for (int i = 0; i < times_array.length; i++) {
 
-             //   Log.d("LOOP TAG",  " Time : " + times_array[i] + "  current time  " + absoluteNumberTime + "  Next prayer imes  " + times_array[i + 1] );
+                Log.d("ARRAY TAG" , "  " + times_array[i]);
 
-                   if(i == 5){
-                    return eNextPrayer.END;
-                  }
+                if(times_array[i] == absoluteNumberTime){
+
+                    //   Log.d("LOOP TAG",  " Time : " + times_array[i] + "  current time  " + absoluteNumberTime + "  Next prayer imes  " + times_array[i + 1] );
+
+                    if(i == 5){
+                        mNextPrayertv.setText("All done for the day!");
+                        return eNextPrayer.END;
+                    }
                     int nextPrayer = times_array[i + 1];
 
                     if(nextPrayer == fajr){
                         mNextPrayer = timeUntilNextPrayer(model.getIsha24(),stringTime,model.getFajr24());
+
+                        editor.putString(KEY_NEXT_PRAYER_SERVICE,"Fajr");
+                        editor.putLong(KEY_NEXT_TIME_SERVICE,mNextPrayer);
+                        editor.commit();
+
+
+
                         if(mNextPrayer <= 30){
-                            fireNotifcation("Fajr",30);
+                            fireNotifcation("Fajr",mNextPrayer);
                         }
 
 
@@ -247,8 +270,13 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
                         return eNextPrayer.FAJR;
                     }
                     if(nextPrayer == duhr){
-                      mNextPrayer = timeUntilNextPrayer(model.getFajr24(),stringTime,model.getDuhr24());
-                        fireNotifcation("Duhr",30);
+                        mNextPrayer = timeUntilNextPrayer(model.getFajr24(),stringTime,model.getDuhr24());
+
+                        editor.putString(KEY_NEXT_PRAYER_SERVICE,"Duhr");
+                        editor.putLong(KEY_NEXT_TIME_SERVICE,mNextPrayer);
+                        editor.commit();
+
+                        fireNotifcation("Duhr",mNextPrayer);
 
 
                         if(mNextPrayer > 60){
@@ -264,7 +292,11 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
                     }
                     if(nextPrayer == asr){
                         mNextPrayer = timeUntilNextPrayer(model.getDuhr24(),stringTime,model.getAsr24());
-                        fireNotifcation("Asr",30);
+                        fireNotifcation("Asr",mNextPrayer);
+
+                        editor.putString(KEY_NEXT_PRAYER_SERVICE,"Asr");
+                        editor.putLong(KEY_NEXT_TIME_SERVICE,mNextPrayer);
+                        editor.commit();
 
                         if(mNextPrayer > 60){
                             String formatNextPrayer = "Asr in 1 hour and " + String.valueOf(mNextPrayer - 60) +" minutes";
@@ -275,11 +307,16 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
                         }
 
                         Log.d("Next prayer tag", " Asr is next:"+ " " + asr);
-                    return eNextPrayer.ASR;
+                        return eNextPrayer.ASR;
                     }
                     if(nextPrayer == maghrib){
-                       mNextPrayer = timeUntilNextPrayer(model.getAsr24(),stringTime,model.getMaghrb24());
-                        fireNotifcation("Maghrib",30);
+
+                        editor.putString(KEY_NEXT_PRAYER_SERVICE,"Maghrib");
+                        editor.putLong(KEY_NEXT_TIME_SERVICE,mNextPrayer);
+                        editor.commit();
+
+                        mNextPrayer = timeUntilNextPrayer(model.getAsr24(),stringTime,model.getMaghrb24());
+                        fireNotifcation("Maghrib",mNextPrayer);
 
 
                         if(mNextPrayer > 60){
@@ -295,8 +332,13 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
                         return eNextPrayer.MAGHRIB;
                     }
                     if(nextPrayer == isha){
+
+                        editor.putString(KEY_NEXT_PRAYER_SERVICE,"Isha");
+                        editor.putLong(KEY_NEXT_TIME_SERVICE,mNextPrayer);
+                        editor.commit();
+
                         mNextPrayer = timeUntilNextPrayer(model.getMaghrb24(),stringTime,model.getIsha24());
-                        fireNotifcation("Isha",30);
+                        fireNotifcation("Isha",mNextPrayer);
 
 
                         if(mNextPrayer > 60){
@@ -311,8 +353,8 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
                         Log.d("Next prayer tag", " Isha is next:"+ " " + isha);
 
                         return eNextPrayer.ISHA;
+                    }
                 }
-            }
 
         }
 
@@ -354,20 +396,12 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         return 0;
 
     }
-    private void fireNotifcation(String prayer, int time){
+    private void fireNotifcation(String prayer, long time){
 
         Resources resources = getResources();
         Intent i = DashboardActivity.newInstance(getActivity());
         PendingIntent pi = PendingIntent.getActivity(getActivity(),0,i,0);
 
-
-        NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-        int importance = NotificationManager.IMPORTANCE_HIGH;
-        NotificationChannel mChannel = new NotificationChannel(MY_NOTIFICATION_CHANNEL_ID,resources.getText(R.string.notification_channel_text),importance);
-        mChannel.enableLights(true);
-        mChannel.setLightColor(Color.RED);
-        mChannel.enableVibration(true);
-        notificationManager.createNotificationChannel(mChannel);
 
         Notification notification = new NotificationCompat.Builder(getActivity(),MY_NOTIFICATION_CHANNEL_ID).setTicker("my_ticker_0001")
                 .setSmallIcon(R.mipmap.ic_launcher_round)
@@ -381,7 +415,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         manager.notify(0,notification);
     }
 
-    private int convertPrayertoInt(String time) {
+    public static int convertPrayertoInt(String time) {
 
         String[] timeSplit = time.split(":");
         String concat = (timeSplit[0] + timeSplit[1]);
@@ -428,11 +462,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
     public void reloadTimes(){
 
-        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
-
-        Gson gson = new Gson();
-        String unpackagedText = prefs.getString(getString(R.string.shared_prefs_key),"");
-        PrayerModel model = gson.fromJson(unpackagedText,PrayerModel.class);
+        PrayerModel model = getCurrentModel();
 
         mFajrText.setText(model.getFajr());
         mDuhrText.setText(model.getDuhr());
@@ -440,6 +470,18 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         mMaghrebText.setText(model.getMaghrb());
         mIshaText.setText(model.getIsha());
         mDownloadProgress.setVisibility(View.GONE);
+
+    }
+
+    public PrayerModel getCurrentModel(){
+
+        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+
+        Gson gson = new Gson();
+        String unpackagedText = prefs.getString(getString(R.string.shared_prefs_key),"");
+        PrayerModel model = gson.fromJson(unpackagedText,PrayerModel.class);
+
+        return model;
 
     }
 
@@ -498,6 +540,13 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
             }
         }
     };
+
+    private void startService(){
+        // returns true if not exist ( hence ! )
+        boolean doesPendingIntentExist = !BackgroundNetwork.isAlarmOn(getActivity());
+        BackgroundNetwork.setAlarm(getActivity(),doesPendingIntentExist);
+
+    }
 
 
     @Override
