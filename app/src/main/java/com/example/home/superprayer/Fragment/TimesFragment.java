@@ -44,7 +44,9 @@ import android.widget.Toast;
 
 import com.example.home.superprayer.DashboardActivity;
 import com.example.home.superprayer.Manifest;
+import com.example.home.superprayer.Model.NextPrayerEnum;
 import com.example.home.superprayer.Model.PrayerModel;
+import com.example.home.superprayer.Model.PrayerNextModel;
 import com.example.home.superprayer.Network.BackgroundNetwork;
 import com.example.home.superprayer.Network.NetWorkResponse;
 import com.example.home.superprayer.Network.NetworkPaths;
@@ -168,33 +170,44 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
         }
 
-        eNextPrayer = getCurrentPrayer(model);
-        switch (eNextPrayer){
+        PrayerNextModel nextPrayerModel = getNextPrayer(model);
+        switch (nextPrayerModel.geteNextPrayer()){
+
             case FAJR:
                 mFajrText.setTypeface(mFajrText.getTypeface(), Typeface.BOLD);
+                handleNextPrayer(nextPrayerModel,"Fajr");
                 Log.d("PRAYER", "FAJR");
                 break;
             case DUHR:
                 mDuhrText.setTypeface(mDuhrText.getTypeface(), Typeface.BOLD);
+                handleNextPrayer(nextPrayerModel,"Duhr");
+
                 Log.d("PRAYER", "DUHR");
                 break;
             case ASR:
                 mAsrText.setTypeface(mAsrText.getTypeface(),Typeface.BOLD);
+                handleNextPrayer(nextPrayerModel,"Asr");
+
                 Log.d("PRAYER", "ASR");
                 break;
             case MAGHRIB:
                 mMaghrebText.setTypeface(mMaghrebText.getTypeface(),Typeface.BOLD);
+                handleNextPrayer(nextPrayerModel,"Maghrib");
+
                 Log.d("PRAYER", "MAGHRIB");
                 break;
             case ISHA:
                 mIshaText.setTypeface(mIshaText.getTypeface(),Typeface.BOLD);
+                handleNextPrayer(nextPrayerModel,"Isha");
+
                 Log.d("PRAYER", "ISHA");
                 break;
             case END:
                 mFajrText.setTypeface(mFajrText.getTypeface(), Typeface.BOLD);
-                Log.d("PRAYER", "END");
-                default:
+                handleNextPrayer(nextPrayerModel,null);
 
+                Log.d("PRAYER", "END");
+            default:
         }
 
 
@@ -207,154 +220,92 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
     }
 
+    private void handleNextPrayer(PrayerNextModel model,String nextprayerText){
+        // edit mNextPrayetYV
 
-    private CurrentPrayer getCurrentPrayer(PrayerModel model){
+        if(model.geteNextPrayer() == NextPrayerEnum.END){
+            mNextPrayertv.setText(R.string.prayer_next_end);
+        } else {
 
-        SharedPreferences.Editor editor = mServicePrefs.edit();
-
-
-            int fajr = convertPrayertoInt(model.getFajr24());
-            int duhr = convertPrayertoInt(model.getDuhr24());
-            int asr = convertPrayertoInt(model.getAsr24());
-            int maghrib = convertPrayertoInt(model.getMaghrb24());
-            int isha = convertPrayertoInt(model.getIsha24());
-
-
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            Date currentDate = new Date();
-            String stringTime = sdf.format(currentDate);
+            mNextPrayertv.setText(nextprayerText + " " +"in" +" " + model.getTimeUntilNextPrayer());
+            mPrayerProgress.setProgress((int)model.getTimeUntilNextPrayer());
+        }
 
 
-            int absoluteNumberTime = convertPrayertoInt(stringTime);
-            int times_array[] = {fajr,duhr,asr,maghrib,isha,absoluteNumberTime};
+    }
+    public static PrayerNextModel getNextPrayer(PrayerModel model){
 
-            Arrays.sort(times_array);
+        PrayerNextModel nextModel = new PrayerNextModel(model);
 
-            for (int i = 0; i < times_array.length; i++) {
-
-                Log.d("ARRAY TAG" , "  " + times_array[i]);
-
-                if(times_array[i] == absoluteNumberTime){
-
-                    //   Log.d("LOOP TAG",  " Time : " + times_array[i] + "  current time  " + absoluteNumberTime + "  Next prayer imes  " + times_array[i + 1] );
-
-                    if(i == 5){
-                        mNextPrayertv.setText("All done for the day!");
-                        return eNextPrayer.END;
-                    }
-                    int nextPrayer = times_array[i + 1];
-
-                    if(nextPrayer == fajr){
-                        mNextPrayer = timeUntilNextPrayer(model.getIsha24(),stringTime,model.getFajr24());
-
-                        editor.putString(KEY_NEXT_PRAYER_SERVICE,"Fajr");
-                        editor.putLong(KEY_NEXT_TIME_SERVICE,mNextPrayer);
-                        editor.commit();
+        long nextPrayerTime;
 
 
-
-                        if(mNextPrayer <= 30){
-                            fireNotifcation("Fajr",mNextPrayer);
-                        }
-
-
-                        if(mNextPrayer > 60){
-                            String formatNextPrayer = "Fajr in 1 hour and " + String.valueOf(mNextPrayer - 60) +" minutes";
-                            mNextPrayertv.setText(formatNextPrayer);
-                        } else {
-                            mNextPrayertv.setText("Fajr in" + " " + String.valueOf(mNextPrayer) + " " + "minutes");
-
-                        }
+        int fajr = convertPrayertoInt(model.getFajr24());
+        int duhr = convertPrayertoInt(model.getDuhr24());
+        int asr = convertPrayertoInt(model.getAsr24());
+        int maghrib = convertPrayertoInt(model.getMaghrb24());
+        int isha = convertPrayertoInt(model.getIsha24());
 
 
-                        return eNextPrayer.FAJR;
-                    }
-                    if(nextPrayer == duhr){
-                        mNextPrayer = timeUntilNextPrayer(model.getFajr24(),stringTime,model.getDuhr24());
-
-                        editor.putString(KEY_NEXT_PRAYER_SERVICE,"Duhr");
-                        editor.putLong(KEY_NEXT_TIME_SERVICE,mNextPrayer);
-                        editor.commit();
-
-                        fireNotifcation("Duhr",mNextPrayer);
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        Date currentDate = new Date();
+        String stringTime = sdf.format(currentDate);
 
 
-                        if(mNextPrayer > 60){
-                            String formatNextPrayer = "Duhr in 1 hour and " + String.valueOf(mNextPrayer - 60) +" minutes";
-                            mNextPrayertv.setText(formatNextPrayer);
-                        } else {
-                            mNextPrayertv.setText("Duhr in" + " " + String.valueOf(mNextPrayer) + " " + "minutes");
+        int absoluteNumberTime = convertPrayertoInt(stringTime);
+        int times_array[] = {fajr,duhr,asr,maghrib,isha,absoluteNumberTime};
 
-                        }
+        Arrays.sort(times_array);
 
+        for (int i = 0; i < times_array.length; i++) {
 
-                        return eNextPrayer.DUHR;
-                    }
-                    if(nextPrayer == asr){
-                        mNextPrayer = timeUntilNextPrayer(model.getDuhr24(),stringTime,model.getAsr24());
-                        fireNotifcation("Asr",mNextPrayer);
+            Log.d("ARRAY TAG" , "  " + times_array[i]);
 
-                        editor.putString(KEY_NEXT_PRAYER_SERVICE,"Asr");
-                        editor.putLong(KEY_NEXT_TIME_SERVICE,mNextPrayer);
-                        editor.commit();
+            if(times_array[i] == absoluteNumberTime){
 
-                        if(mNextPrayer > 60){
-                            String formatNextPrayer = "Asr in 1 hour and " + String.valueOf(mNextPrayer - 60) +" minutes";
-                            mNextPrayertv.setText(formatNextPrayer);
-                        } else {
-                            mNextPrayertv.setText("Asr in" + " " + String.valueOf(mNextPrayer) + " " + "minutes");
+                //   Log.d("LOOP TAG",  " Time : " + times_array[i] + "  current time  " + absoluteNumberTime + "  Next prayer imes  " + times_array[i + 1] );
 
-                        }
-
-                        Log.d("Next prayer tag", " Asr is next:"+ " " + asr);
-                        return eNextPrayer.ASR;
-                    }
-                    if(nextPrayer == maghrib){
-
-                        editor.putString(KEY_NEXT_PRAYER_SERVICE,"Maghrib");
-                        editor.putLong(KEY_NEXT_TIME_SERVICE,mNextPrayer);
-                        editor.commit();
-
-                        mNextPrayer = timeUntilNextPrayer(model.getAsr24(),stringTime,model.getMaghrb24());
-                        fireNotifcation("Maghrib",mNextPrayer);
-
-
-                        if(mNextPrayer > 60){
-                            String formatNextPrayer = "Mahghrib in 1 hour and " + String.valueOf(mNextPrayer - 60) +" minutes";
-                            mNextPrayertv.setText(formatNextPrayer);
-                        } else {
-                            mNextPrayertv.setText("Maghrib in" + " " + String.valueOf(mNextPrayer) + " " + "minutes");
-
-                        }
-
-
-                        Log.d("Next prayer tag", " Maghrib is next:"+ " " + maghrib);
-                        return eNextPrayer.MAGHRIB;
-                    }
-                    if(nextPrayer == isha){
-
-                        editor.putString(KEY_NEXT_PRAYER_SERVICE,"Isha");
-                        editor.putLong(KEY_NEXT_TIME_SERVICE,mNextPrayer);
-                        editor.commit();
-
-                        mNextPrayer = timeUntilNextPrayer(model.getMaghrb24(),stringTime,model.getIsha24());
-                        fireNotifcation("Isha",mNextPrayer);
-
-
-                        if(mNextPrayer > 60){
-                            String formatNextPrayer = "Isha in 1 hour and " + String.valueOf(mNextPrayer - 60) +" minutes";
-                            mNextPrayertv.setText(formatNextPrayer);
-                        } else {
-                            mNextPrayertv.setText("Isha in" + " " + String.valueOf(mNextPrayer) + " " + "minutes");
-
-                        }
-
-
-                        Log.d("Next prayer tag", " Isha is next:"+ " " + isha);
-
-                        return eNextPrayer.ISHA;
-                    }
+                if(i == 5){
+                    nextPrayerTime = 0;
+                    nextModel.seteNextPrayer(NextPrayerEnum.END);
+                    nextModel.setTimeUntilNextPrayer(0);
+                    return nextModel;
                 }
+                int nextPrayer = times_array[i + 1];
+
+                if(nextPrayer == fajr){
+                    nextPrayerTime = timeUntilNextPrayer(model.getIsha24(),stringTime,model.getFajr24());
+                    nextModel.seteNextPrayer(NextPrayerEnum.FAJR);
+                    nextModel.setTimeUntilNextPrayer(nextPrayerTime);
+
+                    return nextModel;
+                }
+                if(nextPrayer == duhr){
+                    nextPrayerTime = timeUntilNextPrayer(model.getFajr24(),stringTime,model.getDuhr24());
+                    nextModel.seteNextPrayer(NextPrayerEnum.DUHR);
+                    nextModel.setTimeUntilNextPrayer(nextPrayerTime);
+
+                    return nextModel;
+                }
+                if(nextPrayer == asr){
+                    nextPrayerTime = timeUntilNextPrayer(model.getDuhr24(),stringTime,model.getAsr24());
+                    nextModel.seteNextPrayer(NextPrayerEnum.ASR);
+                    nextModel.setTimeUntilNextPrayer(nextPrayerTime);
+                    return nextModel;
+                }
+                if(nextPrayer == maghrib){
+                    nextPrayerTime = timeUntilNextPrayer(model.getAsr24(),stringTime,model.getMaghrb24());
+                    nextModel.seteNextPrayer(NextPrayerEnum.MAGHRIB);
+                    nextModel.setTimeUntilNextPrayer(nextPrayerTime);
+                    return nextModel;
+                }
+                if(nextPrayer == isha){
+                    nextPrayerTime = timeUntilNextPrayer(model.getMaghrb24(),stringTime,model.getIsha24());
+                    nextModel.seteNextPrayer(NextPrayerEnum.ISHA);
+                    nextModel.setTimeUntilNextPrayer(nextPrayerTime);
+                    return nextModel;
+                }
+            }
 
         }
 
@@ -362,10 +313,13 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
         //  Log.d("CURRENT TIME" , " Time is  " + stringTime);
         //   Log.d("CURRENT TIME" , " Time is  " + absoluteNumberTime);
-    //  Log.d("Prayer Time Stamps", "Fajr" +  "\t" + fajr + "\n" + "Duhr" + "\t" + duhr + "\n" + "Asr" + "\t" + asr +" \n" + "Maghrib" +"\t" +maghrib + " \n " +"isha" + "\n" + isha);
+        //  Log.d("Prayer Time Stamps", "Fajr" +  "\t" + fajr + "\n" + "Duhr" + "\t" + duhr + "\n" + "Asr" + "\t" + asr +" \n" + "Maghrib" +"\t" +maghrib + " \n " +"isha" + "\n" + isha);
     }
 
-    private long timeUntilNextPrayer(String lastPrayer , String currentTime, String nextPrayerTime){
+
+
+
+    public static long timeUntilNextPrayer(String lastPrayer , String currentTime, String nextPrayerTime){
 
         SimpleDateFormat sdf = new SimpleDateFormat("H:mm");
         try {
@@ -381,7 +335,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
             double difference = (double)diff;
             double difference2 = (double)diff2;
             double absoluteDiff = (difference2/difference) * 100;
-            mPrayerProgress.setProgress((int)(100 - absoluteDiff));
+         //   mPrayerProgress.setProgress((int)(100 - absoluteDiff));
             Log.d("Progress Tag", "  " +" diff1 " + " " + difference + "  " + difference2 + " "  + (difference2/difference) * 100);
 
 
@@ -463,12 +417,54 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
     public void reloadTimes(){
 
         PrayerModel model = getCurrentModel();
+        PrayerNextModel nextModel = getNextPrayer(model);
+        PrayerNextModel nextPrayerModel = getNextPrayer(model);
+
+        switch (nextPrayerModel.geteNextPrayer()){
+
+            case FAJR:
+                mFajrText.setTypeface(mFajrText.getTypeface(), Typeface.BOLD);
+                handleNextPrayer(nextPrayerModel,"Fajr");
+                Log.d("PRAYER", "FAJR");
+                break;
+            case DUHR:
+                mDuhrText.setTypeface(mDuhrText.getTypeface(), Typeface.BOLD);
+                handleNextPrayer(nextPrayerModel,"Duhr");
+
+                Log.d("PRAYER", "DUHR");
+                break;
+            case ASR:
+                mAsrText.setTypeface(mAsrText.getTypeface(),Typeface.BOLD);
+                handleNextPrayer(nextPrayerModel,"Asr");
+
+                Log.d("PRAYER", "ASR");
+                break;
+            case MAGHRIB:
+                mMaghrebText.setTypeface(mMaghrebText.getTypeface(),Typeface.BOLD);
+                handleNextPrayer(nextPrayerModel,"Maghrib");
+
+                Log.d("PRAYER", "MAGHRIB");
+                break;
+            case ISHA:
+                mIshaText.setTypeface(mIshaText.getTypeface(),Typeface.BOLD);
+                handleNextPrayer(nextPrayerModel,"Isha");
+
+                Log.d("PRAYER", "ISHA");
+                break;
+            case END:
+                mFajrText.setTypeface(mFajrText.getTypeface(), Typeface.BOLD);
+                handleNextPrayer(nextPrayerModel,null);
+
+                Log.d("PRAYER", "END");
+            default:
+        }
 
         mFajrText.setText(model.getFajr());
         mDuhrText.setText(model.getDuhr());
         mAsrText.setText(model.getAsr());
         mMaghrebText.setText(model.getMaghrb());
         mIshaText.setText(model.getIsha());
+
         mDownloadProgress.setVisibility(View.GONE);
 
     }
@@ -476,7 +472,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
     public PrayerModel getCurrentModel(){
 
         SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
-
+    
         Gson gson = new Gson();
         String unpackagedText = prefs.getString(getString(R.string.shared_prefs_key),"");
         PrayerModel model = gson.fromJson(unpackagedText,PrayerModel.class);

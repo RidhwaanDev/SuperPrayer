@@ -48,7 +48,7 @@ public class BackgroundNetwork extends IntentService {
     public static Intent newInstance(Context context){
 
 
-                    return new Intent(context,BackgroundNetwork.class);
+        return new Intent(context,BackgroundNetwork.class);
 
 
     }
@@ -68,13 +68,9 @@ public class BackgroundNetwork extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
         Log.d("BACKGROUND RECIEVE", "Received an intent: " + intent);
 
-        SharedPreferences preferences = getApplicationContext().getSharedPreferences(TimesFragment.SHARED_PREFS_SERVICE_DATE,Context.MODE_PRIVATE);
-        String prayer = preferences.getString(TimesFragment.KEY_NEXT_PRAYER_SERVICE,"");
-        long time = preferences.getLong(TimesFragment.KEY_NEXT_TIME_SERVICE,0);
-        fireNotifcation(prayer,time);
 
 
-    }
+}
 
     private void fireNotifcation(String prayer,long time){
 

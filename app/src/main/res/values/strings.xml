@@ -20,6 +20,8 @@
     <string name="next_prayer_header">Next prayer</string>
 
     <string name="string_not_yet_loaded">-- --</string>
+    <string name="prayer_next_end"> All done for Today!</string>
+
 
     <string name="open">Open</string>
     <string name="close">Close</string>
