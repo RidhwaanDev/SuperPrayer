@@ -18,6 +18,7 @@ import android.util.Log;
 import com.example.home.superprayer.DashboardActivity;
 import com.example.home.superprayer.Fragment.TimesFragment;
 import com.example.home.superprayer.Model.PrayerModel;
+import com.example.home.superprayer.Model.PrayerNextModel;
 import com.example.home.superprayer.R;
 import com.google.gson.Gson;
 
@@ -30,23 +31,25 @@ import java.util.Date;
  * Created by Home on 12/10/2017.
  */
 
-public class BackgroundNetwork extends IntentService {
+public class BackgroundNetwork extends IntentService implements NetWorkResponse {
 
     private static int UPDATE_INTERVAL = (1000 * 60);
-    private static int TRUE_UPDATE = (1000 * 60) * 10;
+    private static int TRUE_UPDATE = (1000 * 60) * 10; // every ten minutes
 
     public static final String KEY_PRAYER_MODEL_TO_NOTIFIY = "BACKGROUND_NETWORK_UPDATE_NOTF";
     private static final String MY_NOTIFICATION_CHANNEL_ID = "my_channel_id_0002";
 
+    private static final String KEY_LAT = "KEY PREFS LAT";
+    private static final String KEY_LNG = "KEY PREFS LANG";
+
+
 
     private static final String TAG = "PollService";
 
-    private PrayerModel model;
 
-
+    private PrayerNextModel mServiceNextModel;
 
     public static Intent newInstance(Context context){
-
 
         return new Intent(context,BackgroundNetwork.class);
 
@@ -62,17 +65,61 @@ public class BackgroundNetwork extends IntentService {
         super.onStart(intent, startId);
 
 
+
+    }
+
+    private void getTimes(double lat, double lng){
+
+        Long tsLong = System.currentTimeMillis()/1000;
+        String ts = tsLong.toString();
+
+
+        Log.d("SHAREDPREFS LAT LNG", "  LAT  " +  lat + " LNG  " + lng);
+
+        String requestPath = NetworkRequest.BuildRequest(lat,lng,null);
+
+        NetworkRequest mRequest = new NetworkRequest(getApplicationContext());
+        mRequest.mResponse = this;
+        mRequest.requestPrayerTimeSingle(requestPath);
+
     }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         Log.d("BACKGROUND RECIEVE", "Received an intent: " + intent);
+       // PrayerNextModel nextModel  = TimesFragment.getNextPrayer(mServicePrayerModel);
+        if(!NetworkQueue.isConnected(getApplicationContext())){
+            setAlarm(getApplicationContext(),false,0,0);
+        } else {
+            double lat = intent.getDoubleExtra(KEY_LAT,0);
+            double lng = intent.getDoubleExtra(KEY_LNG,0);
 
+            getTimes(lat,lng);
+
+
+        }
 
 
 }
 
-    private void fireNotifcation(String prayer,long time){
+    @Override
+    public void onDownloadedData(PrayerModel model) {
+        this.mServiceNextModel = TimesFragment.getNextPrayer(model);
+
+        long time = mServiceNextModel.getTimeUntilNextPrayer();
+        String prayer = mServiceNextModel.geteNextPrayer().toString();
+
+        if(time != 0){
+            fireNotifcation(prayer,time);
+
+        }
+
+
+        Log.d("SERVICE CALLBACK" , "   " + model.getFajr24());
+
+    }
+
+    private void fireNotifcation(String prayer, long time){
 
         Resources resources = getResources();
         Intent i = DashboardActivity.newInstance(BackgroundNetwork.this);
@@ -92,13 +139,15 @@ public class BackgroundNetwork extends IntentService {
     }
 
 
-    public static void setAlarm(Context c, boolean isOn){
+    public static void setAlarm(Context c, boolean isOn,double lat, double lng){
         //Create an alarm manager to start service
         //First create an intent to start the service
         //Wrap the intent into a pending intent so it can be used with AlarmManager
 
 
         Intent i = BackgroundNetwork.newInstance(c);
+        i.putExtra(KEY_LAT,lat);
+        i.putExtra(KEY_LNG,lng);
         PendingIntent pendingIntent = PendingIntent.getService(c,0,i,0);
 
 
@@ -106,7 +155,7 @@ public class BackgroundNetwork extends IntentService {
         AlarmManager alarmManager = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
 
         if(isOn){
-            alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime(),UPDATE_INTERVAL,pendingIntent);
+            alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime(),TRUE_UPDATE,pendingIntent);
         } else {
             alarmManager.cancel(pendingIntent);
             pendingIntent.cancel();

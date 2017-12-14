@@ -10,4 +10,7 @@ public class NetworkPaths {
     public static final String AUTHORITY_PATH = "api.aladhan.com";
     public static final String GOOGLE_API_KEY_PLACES ="AIzaSyAqaDB4ocQ36P6xwMLxagGjaSDVPyB21Os";
 
+
+    public static final String SHARED_PREFS ="GLOBAL SHARED PREFS ";
+
 }

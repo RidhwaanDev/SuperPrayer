@@ -21,6 +21,7 @@ import android.hardware.usb.UsbInterface;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
+import android.net.Network;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
@@ -99,22 +100,21 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
     private ProgressBar mDownloadProgress;
     private ProgressBar mPrayerProgress;
 
-    private enum CurrentPrayer {FAJR,DUHR,ASR,MAGHRIB,ISHA,END}
-    private CurrentPrayer eNextPrayer;
-    private long mNextPrayer;
 
-    private SharedPreferences mServicePrefs;
+
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-       View v = inflater.inflate(R.layout.fragment_times_layout,container,false);
+        View v = inflater.inflate(R.layout.fragment_times_layout,container,false);
 
-        mServicePrefs = getActivity().getApplicationContext().getSharedPreferences(SHARED_PREFS_SERVICE_DATE,Context.MODE_PRIVATE);
+        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+        double lat = prefs.getFloat(getString(R.string.lat_location),0);
+        double lng = prefs.getFloat(getString(R.string.lng_location),0);
 
 
-        startService();
+        startService(lat,lng);
 
         mFajrText =  v.findViewById(R.id.fajr_time_tv);
         mDuhrText =  v.findViewById(R.id.duhr_time_tv);
@@ -158,7 +158,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         }
 
         if(isAdded()) {
-            SharedPreferences prefs = getActivity() .getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
 
             SharedPreferences.Editor editPrefs = prefs.edit();
 
@@ -350,24 +350,6 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         return 0;
 
     }
-    private void fireNotifcation(String prayer, long time){
-
-        Resources resources = getResources();
-        Intent i = DashboardActivity.newInstance(getActivity());
-        PendingIntent pi = PendingIntent.getActivity(getActivity(),0,i,0);
-
-
-        Notification notification = new NotificationCompat.Builder(getActivity(),MY_NOTIFICATION_CHANNEL_ID).setTicker("my_ticker_0001")
-                .setSmallIcon(R.mipmap.ic_launcher_round)
-                .setContentTitle(resources.getString(R.string.notification_title))
-                .setContentText(prayer + " " + "in" + " " + time +" " + "minutes")
-                .setAutoCancel(true)
-                .setContentIntent(pi)
-                .build();
-
-        NotificationManagerCompat manager = NotificationManagerCompat.from(getActivity());
-        manager.notify(0,notification);
-    }
 
     public static int convertPrayertoInt(String time) {
 
@@ -396,18 +378,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         String requestPath = NetworkRequest.BuildRequest(lat,lng,null);
 
 
-      /*  Uri.Builder builder = new Uri.Builder();
-         builder.scheme("http")
-                .authority(NetworkPaths.AUTHORITY_PATH)
-                .appendPath("timings")
-                .appendPath(ts)
-                .appendQueryParameter("latitude",String.valueOf(lat))
-                .appendQueryParameter("longitude", String.valueOf(lng))
-                 .appendQueryParameter("school","1")
-                .build();
 
-        Log.d("URI BUILDER", "  final path " +   "  " + builder.toString());
-*/
 
         NetworkRequest requestTimes = new NetworkRequest(getActivity());
         requestTimes.mResponse = this;
@@ -472,7 +443,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
     public PrayerModel getCurrentModel(){
 
         SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
-    
+
         Gson gson = new Gson();
         String unpackagedText = prefs.getString(getString(R.string.shared_prefs_key),"");
         PrayerModel model = gson.fromJson(unpackagedText,PrayerModel.class);
@@ -537,10 +508,10 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         }
     };
 
-    private void startService(){
+    private void startService(double lat, double lng){
         // returns true if not exist ( hence ! )
         boolean doesPendingIntentExist = !BackgroundNetwork.isAlarmOn(getActivity());
-        BackgroundNetwork.setAlarm(getActivity(),doesPendingIntentExist);
+        BackgroundNetwork.setAlarm(getActivity(),doesPendingIntentExist, lat, lng);
 
     }
 
