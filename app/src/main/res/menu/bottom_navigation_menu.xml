@@ -14,13 +14,13 @@
         android:id="@+id/action_log_frag"
         android:enabled="true"
         android:icon="@drawable/ic_log_24dp"
-        android:title="@string/prayer_times_frag"
+        android:title="@string/log_frag"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_compass_frag"
         android:enabled="true"
         android:icon="@drawable/ic_compass_24dp"
-        android:title="@string/prayer_times_frag"
+        android:title="@string/compass_frag"
         app:showAsAction="ifRoom" />
 
 </menu>

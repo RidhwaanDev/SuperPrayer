@@ -11,6 +11,7 @@
     <color name="colorMaghrib">#263238</color>
     <color name="colorIsha">#212121</color>
     <color name="backgroundProgressColor">#90A4AE</color>
+    <color name="defaultBackgroundColor">#EEEEEE</color>
 
 
 

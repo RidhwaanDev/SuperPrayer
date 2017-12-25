@@ -1,9 +1,8 @@
-package com.example.home.superprayer;
+package com.example.home.superprayer.Activity;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.FragmentManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -29,13 +28,13 @@ import com.example.home.superprayer.Fragment.LogFragment;
 import com.example.home.superprayer.Dialog.PrayerSearchDialogFragment;
 import com.example.home.superprayer.Fragment.TimesFragment;
 import com.example.home.superprayer.Model.PrayerDateModel;
+import com.example.home.superprayer.R;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 
-import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;

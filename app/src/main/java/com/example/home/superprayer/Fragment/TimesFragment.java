@@ -1,39 +1,19 @@
 package com.example.home.superprayer.Fragment;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.IntentService;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.ColorSpace;
 import android.graphics.Typeface;
-import android.hardware.usb.UsbInterface;
 import android.location.Location;
-import android.location.LocationManager;
 import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.NotificationBuilderWithBuilderAccessor;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -43,14 +23,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.home.superprayer.DashboardActivity;
-import com.example.home.superprayer.Manifest;
 import com.example.home.superprayer.Model.NextPrayerEnum;
 import com.example.home.superprayer.Model.PrayerModel;
 import com.example.home.superprayer.Model.PrayerNextModel;
 import com.example.home.superprayer.Network.BackgroundNetwork;
 import com.example.home.superprayer.Network.NetWorkResponse;
-import com.example.home.superprayer.Network.NetworkPaths;
 import com.example.home.superprayer.Network.NetworkQueue;
 import com.example.home.superprayer.Network.NetworkRequest;
 import com.example.home.superprayer.R;
@@ -58,17 +35,10 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
-import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
-import org.w3c.dom.Text;
-
-import java.lang.annotation.Target;
-import java.security.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 
 /**

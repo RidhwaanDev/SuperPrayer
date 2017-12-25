@@ -6,26 +6,18 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
-import com.example.home.superprayer.DashboardActivity;
+import com.example.home.superprayer.Activity.DashboardActivity;
 import com.example.home.superprayer.Fragment.TimesFragment;
 import com.example.home.superprayer.Model.PrayerModel;
 import com.example.home.superprayer.Model.PrayerNextModel;
 import com.example.home.superprayer.R;
-import com.google.gson.Gson;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
 
 /**
  * Created by Home on 12/10/2017.
@@ -34,7 +26,7 @@ import java.util.Date;
 public class BackgroundNetwork extends IntentService implements NetWorkResponse {
 
     private static int UPDATE_INTERVAL = (1000 * 60);
-    private static int TRUE_UPDATE = (1000 * 60) * 10; // every ten minutes
+    private static int TRUE_UPDATE = (1000 * 60) * 60; // every ten minutes
 
     public static final String KEY_PRAYER_MODEL_TO_NOTIFIY = "BACKGROUND_NETWORK_UPDATE_NOTF";
     private static final String MY_NOTIFICATION_CHANNEL_ID = "my_channel_id_0002";
