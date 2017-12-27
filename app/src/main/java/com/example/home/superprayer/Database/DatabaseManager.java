@@ -54,7 +54,7 @@ public class DatabaseManager {
 
     public DataCursor queryForPrayer(String whichColumn, String[] whichRow){
         Cursor cursor = mDataBase.query(DataBaseSchema.PrayerTable.NAME,null,whichColumn,whichRow,null,null,null);
-        return  new DataCursor(cursor);
+        return new DataCursor(cursor);
     }
 
     public ArrayList<PrayerDataBaseModel> getDBPrayers(){

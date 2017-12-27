@@ -56,9 +56,6 @@ public class NetworkQueue {
         mPrayer = model;
     }
 
-    public static PrayerModel getPrayerInstance(){
-        return mPrayer;
-    }
 
 
 

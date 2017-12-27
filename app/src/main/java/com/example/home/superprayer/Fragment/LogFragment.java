@@ -48,32 +48,26 @@ public class LogFragment extends android.support.v4.app.Fragment {
         mAsrAdd = v.findViewById(R.id.btn_add_asr_missed);
         mIshaAdd = v.findViewById(R.id.btn_add_isha_missed);
 
-        mFajrAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
 
         PrayerDataBaseModel fajr = new PrayerDataBaseModel();
-        fajr.setmCount(0);
+        fajr.setmCount(47);
         fajr.setmName("Fajr");
 
         PrayerDataBaseModel duhr = new PrayerDataBaseModel();
-        fajr.setmCount(0);
-        fajr.setmName("Duhr");
+        duhr.setmCount(567);
+        duhr.setmName("Duhr");
 
         PrayerDataBaseModel asr = new PrayerDataBaseModel();
-        fajr.setmCount(0);
-        fajr.setmName("Asr");
+        asr.setmCount(45);
+        asr.setmName("Asr");
 
         PrayerDataBaseModel maghrib = new PrayerDataBaseModel();
-        fajr.setmCount(0);
-        fajr.setmName("Maghrib");
+        maghrib.setmCount(57);
+        maghrib.setmName("Maghrib");
 
         PrayerDataBaseModel isha = new PrayerDataBaseModel();
-        fajr.setmCount(0);
-        fajr.setmName("Isha");
+        isha.setmCount(23);
+        isha.setmName("osha");
 
         dbManager.addPrayer(fajr);
         dbManager.addPrayer(duhr);
@@ -81,7 +75,10 @@ public class LogFragment extends android.support.v4.app.Fragment {
         dbManager.addPrayer(maghrib);
         dbManager.addPrayer(isha);
 
-
+        ArrayList<PrayerDataBaseModel> testList = dbManager.getDBPrayers();
+        for (PrayerDataBaseModel model: testList) {
+            Log.d("DATABASE TEST", "   " + model.getmName() + "  " + model.getmCount());
+        }
 
         BarChart barChart = v.findViewById(R.id.bar_char_prayer);
 

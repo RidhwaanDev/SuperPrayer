@@ -17,7 +17,7 @@ public class DataCursor extends CursorWrapper {
         super(cursor);
     }
 
-    public PrayerDataBaseModel getPrayer(){
+       public PrayerDataBaseModel getPrayer(){
         String id = getString(getColumnIndex(DataBaseSchema.PrayerTable.Cols.UUID));
         String prayer = getString(getColumnIndex(DataBaseSchema.PrayerTable.Cols.PRAYER));
         String count = getString(getColumnIndex(DataBaseSchema.PrayerTable.Cols.COUNT));
@@ -26,9 +26,6 @@ public class DataCursor extends CursorWrapper {
         model.setmName(prayer);
         model.setmCount(Integer.parseInt(count));
         return model;
-
-
-
 
     }
 }
