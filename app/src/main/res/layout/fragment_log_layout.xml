@@ -67,7 +67,6 @@
                 android:padding="2dp"
                 android:gravity="end"
                 android:textSize="16dp"
-                android:text="32 missed"
                 android:layout_alignParentRight="true"
                 android:textColor="@color/label_text_color"
                 android:textStyle="bold"
@@ -81,6 +80,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackground"
             android:id="@+id/duhr_missed_view"
             >
 
@@ -114,7 +115,6 @@
                 android:padding="2dp"
                 android:gravity="end"
                 android:textSize="16dp"
-                android:text="32 missed"
                 android:layout_alignParentRight="true"
                 android:textColor="@color/label_text_color"
                 android:textStyle="bold"
@@ -128,6 +128,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackground"
             android:id="@+id/asr_view"
             >
 
@@ -161,7 +163,6 @@
                 android:padding="2dp"
                 android:gravity="end"
                 android:textSize="16dp"
-                android:text="32 missed"
                 android:layout_alignParentRight="true"
                 android:textColor="@color/label_text_color"
                 android:textStyle="bold"
@@ -175,6 +176,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackground"
             android:id="@+id/maghrib_view"
             >
 
@@ -208,7 +211,6 @@
                 android:padding="2dp"
                 android:gravity="end"
                 android:textSize="16dp"
-                android:text="32 missed"
                 android:layout_alignParentRight="true"
                 android:textColor="@color/label_text_color"
                 android:textStyle="bold"
@@ -222,6 +224,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="18dp"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackground"
             android:id="@+id/isha_view"
             >
 
@@ -255,7 +259,6 @@
                 android:padding="2dp"
                 android:gravity="end"
                 android:textSize="16dp"
-                android:text="32 missed"
                 android:layout_alignParentRight="true"
                 android:textColor="@color/label_text_color"
                 android:textStyle="bold"

@@ -347,9 +347,6 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
         String requestPath = NetworkRequest.BuildRequest(lat,lng,null);
 
-
-
-
         NetworkRequest requestTimes = new NetworkRequest(getActivity());
         requestTimes.mResponse = this;
         requestTimes.requestPrayerTimeSingle(requestPath);

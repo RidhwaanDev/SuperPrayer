@@ -92,7 +92,7 @@ public class DatabaseManager {
     }
     public void clearData(){
 
-        String args[] = new String[]{fajr.getmID().toString(),duhr.getmID().toString(),asr.getmID().toString(),maghrib.getmID().toString(),isha.getmID().toString()};
+        String args[] = new String[]{fajr.getmID().toString()};
         mDataBase.delete(DataBaseSchema.PrayerTable.NAME,DataBaseSchema.PrayerTable.Cols.UUID + "=?", args);
 
     }

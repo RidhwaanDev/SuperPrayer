@@ -38,6 +38,11 @@
     <string name="no_data_text">No prayers missed</string>
 
 
+    <string name="log_tip">Click on the label to add</string>
+    <string name="never_show_again">Never show again</string>
+    <string name="prefs_never_show_again">never_show_again_perfs_entry_1000</string>
+
+
 
 
 
