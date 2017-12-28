@@ -83,7 +83,6 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         double lat = prefs.getFloat(getString(R.string.lat_location),0);
         double lng = prefs.getFloat(getString(R.string.lng_location),0);
 
-
         startService(lat,lng);
 
         mFajrText =  v.findViewById(R.id.fajr_time_tv);
@@ -286,9 +285,6 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         //  Log.d("Prayer Time Stamps", "Fajr" +  "\t" + fajr + "\n" + "Duhr" + "\t" + duhr + "\n" + "Asr" + "\t" + asr +" \n" + "Maghrib" +"\t" +maghrib + " \n " +"isha" + "\n" + isha);
     }
 
-
-
-
     public static long timeUntilNextPrayer(String lastPrayer , String currentTime, String nextPrayerTime){
 
         SimpleDateFormat sdf = new SimpleDateFormat("H:mm");
@@ -312,13 +308,11 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
             //convert from seconds to minutes
             return diff2 / 60;
 
-        }catch (ParseException e){
+        }catch (ParseException e) {
             e.printStackTrace();
         }
 
-
         return 0;
-
     }
 
     public static int convertPrayertoInt(String time) {
@@ -329,7 +323,6 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
         return absoluteTime;
     }
-
 
     public void updateTimes(){
 
@@ -433,6 +426,8 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
     private void getUserLocation(){
         //  check for permission is done elsewhere. method will always be called if permission is granted
+
+        Log.d("LOCATION TAG", "   " + "entered location");
         mLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
