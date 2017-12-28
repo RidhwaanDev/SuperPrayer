@@ -12,9 +12,16 @@ Super Prayer is a modern prayer times app with a focus on prayer times, not ad r
 * Compass
 * Completely ad free
 * Low-weight and optimized for battery performance.
+## Gallery
+
+
+
+
+
+
 
 ## Geting started on building
-
+	
 ### Pre-requisites 
 To build SuperPrayer on your local machine you will need
 
@@ -43,16 +50,16 @@ bug    develop/bug/bugName   ( to fix bug )
 feature  develop/feature/featureName ( to add new feature )
 ```
 
-
-
 ## Versioning
 
 Git/Github is exclusivley used for version control. All changes are currently done on /master. 
 
 ## Authors
 
-* **Ridhwaan Anayetullah** - *Initial work* - [launchify.org](https://github.com/PurpleBooth)
+* **Ridhwaan Anayetullah** - *Initial work* - [launchify.org](https://github.com/RidhwaanDev)
 
+### Acknowledgements
 
-## License
+Special thanks to Phil Jay's MPAndroidChart his powerful graphing library
+
 
