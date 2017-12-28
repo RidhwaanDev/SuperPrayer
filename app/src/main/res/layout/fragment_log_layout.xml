@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     >
 
     <android.support.v7.widget.CardView
-        android:layout_marginBottom="8dp"
         android:elevation="4dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -23,88 +23,103 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="12dp"
         android:orientation="vertical">
 
         <RelativeLayout
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:id="@+id/fajr_missed_view"
             >
+
+            <View
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:background="@drawable/fajr_shape"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="12dp"
+                android:id="@+id/circle_view1"
+                >
+            </View>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/circle_view1"
                 android:layout_marginLeft="12dp"
                 android:layout_marginTop="8dp"
                 android:text="@string/string_fajr"
-                android:textColor="@color/colorDuhr"
                 android:textSize="18dp"
+                android:textStyle="bold"
                 android:id="@+id/prayerName" />
 
             <TextView
                 android:id="@+id/tv_prayer_missed_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginLeft="12dp"
-                android:layout_toRightOf="@+id/prayerName"
-                android:textSize="18dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginRight="8dp"
+                android:padding="2dp"
+                android:gravity="end"
+                android:textSize="16dp"
                 android:text="32 missed"
-                android:textStyle="italic" />
-
-            <Button
-                android:id="@+id/btn_add_fajr_missed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:backgroundTint="@color/defaultBackgroundColor"
-                android:text="Add"
-                android:textColor="@color/colorMaghrib"
-                android:layout_marginLeft="8dp"
-             />
+                android:textColor="@color/label_text_color"
+                android:textStyle="bold"
+                android:background="@drawable/rectangle_background"
+
+               />
 
         </RelativeLayout>
         <RelativeLayout
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:id="@+id/duhr_missed_view"
             >
+
+            <View
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:background="@drawable/duhr_shape"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="12dp"
+                android:id="@+id/circle_view2"
+                >
+            </View>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/circle_view2"
                 android:layout_marginLeft="12dp"
                 android:layout_marginTop="8dp"
                 android:text="@string/string_duhr"
                 android:textSize="18dp"
-                android:textColor="@color/colorDuhr"
+                android:textStyle="bold"
                 android:id="@+id/prayerName2" />
 
             <TextView
                 android:id="@+id/tv_prayer_missed_count2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginLeft="12dp"
-                android:layout_toRightOf="@+id/prayerName2"
-                android:textSize="18dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginRight="8dp"
+                android:padding="2dp"
+                android:gravity="end"
+                android:textSize="16dp"
                 android:text="32 missed"
-                android:textStyle="italic" />
-
-            <Button
-                android:id="@+id/btn_add_duhr_missed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:backgroundTint="@color/defaultBackgroundColor"
+                android:textColor="@color/label_text_color"
+                android:textStyle="bold"
+                android:background="@drawable/rectangle_background"
 
-                android:text="Add"
-                android:textColor="@color/colorMaghrib"
-                android:layout_marginLeft="8dp"
                 />
 
         </RelativeLayout>
@@ -112,39 +127,46 @@
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:id="@+id/asr_view"
             >
+
+            <View
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:background="@drawable/asr_shape"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="12dp"
+                android:id="@+id/circle_view3"
+                >
+            </View>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/circle_view3"
                 android:layout_marginLeft="12dp"
                 android:layout_marginTop="8dp"
                 android:text="@string/string_asr"
                 android:textSize="18dp"
-                android:textColor="@color/colorDuhr"
+                android:textStyle="bold"
                 android:id="@+id/prayerName3" />
 
             <TextView
                 android:id="@+id/tv_prayer_missed_count3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginLeft="12dp"
-                android:layout_toRightOf="@+id/prayerName3"
-                android:textSize="18dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginRight="8dp"
+                android:padding="2dp"
+                android:gravity="end"
+                android:textSize="16dp"
                 android:text="32 missed"
-                android:textStyle="italic" />
-
-            <Button
-                android:id="@+id/btn_add_asr_missed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:backgroundTint="@color/defaultBackgroundColor"
-                android:text="Add"
-                android:textColor="@color/colorMaghrib"
-                android:layout_marginLeft="8dp"
+                android:textColor="@color/label_text_color"
+                android:textStyle="bold"
+                android:background="@drawable/rectangle_background"
+
                 />
 
         </RelativeLayout>
@@ -152,39 +174,46 @@
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:id="@+id/maghrib_view"
             >
+
+            <View
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:background="@drawable/maghrib_shape"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="12dp"
+                android:id="@+id/circle_view4"
+                >
+            </View>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/circle_view4"
                 android:layout_marginLeft="12dp"
                 android:layout_marginTop="8dp"
                 android:text="@string/string_maghrib"
-                android:textColor="@color/colorDuhr"
                 android:textSize="18dp"
+                android:textStyle="bold"
                 android:id="@+id/prayerName4" />
 
             <TextView
                 android:id="@+id/tv_prayer_missed_count4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginLeft="12dp"
-                android:layout_toRightOf="@+id/prayerName4"
-                android:textSize="18dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginRight="8dp"
+                android:padding="2dp"
+                android:gravity="end"
+                android:textSize="16dp"
                 android:text="32 missed"
-                android:textStyle="italic" />
-
-            <Button
-                android:id="@+id/btn_add_maghrib_missed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:backgroundTint="@color/defaultBackgroundColor"
-                android:text="Add"
-                android:textColor="@color/colorMaghrib"
-                android:layout_marginLeft="8dp"
+                android:textColor="@color/label_text_color"
+                android:textStyle="bold"
+                android:background="@drawable/rectangle_background"
+
                 />
 
         </RelativeLayout>
@@ -192,45 +221,54 @@
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="18dp"
+            android:id="@+id/isha_view"
             >
+
+            <View
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:background="@drawable/isha_shape"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="12dp"
+                android:id="@+id/circle_view5"
+                >
+            </View>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/circle_view5"
                 android:layout_marginLeft="12dp"
                 android:layout_marginTop="8dp"
                 android:text="@string/string_isha"
-                android:textColor="@color/colorDuhr"
                 android:textSize="18dp"
+                android:textStyle="bold"
                 android:id="@+id/prayerName5" />
 
             <TextView
                 android:id="@+id/tv_prayer_missed_count5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginLeft="12dp"
-                android:layout_toRightOf="@+id/prayerName5"
-                android:textSize="18dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginRight="8dp"
+                android:padding="2dp"
+                android:gravity="end"
+                android:textSize="16dp"
                 android:text="32 missed"
-                android:textStyle="italic" />
-
-            <Button
-                android:id="@+id/btn_add_isha_missed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:backgroundTint="@color/defaultBackgroundColor"
-                android:text="Add"
-                android:textColor="@color/colorMaghrib"
-                android:layout_marginLeft="8dp"
+                android:textColor="@color/label_text_color"
+                android:textStyle="bold"
+                android:background="@drawable/rectangle_background"
+
                 />
 
         </RelativeLayout>
 
 
     </LinearLayout>
+
+
 
 
 </LinearLayout>

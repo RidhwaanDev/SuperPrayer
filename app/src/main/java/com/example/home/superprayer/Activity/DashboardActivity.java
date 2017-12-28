@@ -28,6 +28,7 @@ import com.example.home.superprayer.Fragment.LogFragment;
 import com.example.home.superprayer.Dialog.PrayerSearchDialogFragment;
 import com.example.home.superprayer.Fragment.TimesFragment;
 import com.example.home.superprayer.Model.PrayerDateModel;
+import com.example.home.superprayer.Network.NetworkQueue;
 import com.example.home.superprayer.R;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -55,6 +56,8 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
     private DrawerLayout mDrawerNav;
     private ActionBarDrawerToggle mToggle;
     private Toolbar mToolBar;
+
+    private static int CURRENT_FRAG = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,13 +111,15 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
                 return true;
 
             case R.id.search_prayer_by_date_item:
+                if(!NetworkQueue.isConnected(this)){
+                    Toast.makeText(this,"Not connected to internet. Cannot search",Toast.LENGTH_SHORT).show();
+                } else {
+                    DatePickerDialog dialog = createDatePickerDialog(new Date());
+                    dialog.show();
 
-                DatePickerDialog dialog = createDatePickerDialog(new Date());
-                dialog.show();
-
+                }
 
                 return true;
-
 
                 default:
 
@@ -164,6 +169,7 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.dashboard_menu,menu);
+
         return true;
     }
 
@@ -233,6 +239,8 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
                         transaction.replace(R.id.fragment_layout_id, currentFragment, "Prayer Times");
                         transaction.commit();
 
+                        CURRENT_FRAG = 1;
+
                         Log.d("VIEW PAGER", " HELLO ITS PRAYER ");
                         return true;
 
@@ -242,6 +250,7 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
                         transaction2.replace(R.id.fragment_layout_id, currentFragment, "Prayer Log");
                         transaction2.commit();
 
+                        CURRENT_FRAG = 2;
 
                         Log.d("VIEW PAGER", " HELLO ITS LOG ");
                         return true;
@@ -251,6 +260,10 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
                         FragmentTransaction transaction3 = getSupportFragmentManager().beginTransaction();
                         transaction3.replace(R.id.fragment_layout_id, currentFragment, "Compass");
                         transaction3.commit();
+
+
+                        CURRENT_FRAG = 3;
+
                         return true;
 
                 }

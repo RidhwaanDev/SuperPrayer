@@ -9,9 +9,14 @@
     <color name="colorDuhr">#E65100</color>
     <color name="colorAsr">#FFAB00</color>
     <color name="colorMaghrib">#263238</color>
-    <color name="colorIsha">#212121</color>
+    <color name="colorIsha">#90A4AE</color>
     <color name="backgroundProgressColor">#90A4AE</color>
     <color name="defaultBackgroundColor">#EEEEEE</color>
+    <color name="rectangle_label_background">#E0E0E0</color>
+    <color name="label_text_color"> #2962FF</color>
+
+
+
 
 
 

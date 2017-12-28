@@ -4,7 +4,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
+import com.example.home.superprayer.Graph.GraphUtility;
 import com.example.home.superprayer.Model.PrayerDataBaseModel;
 
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ public class DatabaseManager {
     private static DatabaseManager sDataBaseManager;
 
     private SQLiteDatabase mDataBase;
+    public  PrayerDataBaseModel fajr,duhr,asr,maghrib,isha;
 
 
     public static DatabaseManager getInstance(Context c){
@@ -30,6 +33,37 @@ public class DatabaseManager {
 
     private DatabaseManager (Context c){
         mDataBase = new DataBaseHelper(c).getWritableDatabase();
+        init();
+    }
+
+    private  void init(){
+        fajr = new PrayerDataBaseModel();
+        duhr = new PrayerDataBaseModel();
+        asr = new PrayerDataBaseModel();
+        maghrib = new PrayerDataBaseModel();
+        isha = new PrayerDataBaseModel();
+
+        fajr.setmCount(0);
+        fajr.setmName("Fajr");
+
+        duhr.setmCount(0);
+        duhr.setmName("Duhr");
+
+        asr.setmCount(0);
+        asr.setmName("Asr");
+
+        maghrib.setmCount(0);
+        maghrib.setmName("Maghrib");
+
+        isha.setmCount(0);
+        isha.setmName("Isha");
+
+        addPrayer(fajr);
+        addPrayer(duhr);
+        addPrayer(asr);
+        addPrayer(maghrib);
+        addPrayer(isha);
+
     }
 
     public void updatePrayer(PrayerDataBaseModel model){
@@ -38,7 +72,7 @@ public class DatabaseManager {
         mDataBase.update(DataBaseSchema.PrayerTable.NAME,values,DataBaseSchema.PrayerTable.Cols.UUID + " = ? ", new String[]{uuID});
     }
 
-    public void addPrayer(PrayerDataBaseModel model){
+    private  void addPrayer(PrayerDataBaseModel model){
         ContentValues values = getContentValues(model);
         mDataBase.insert(DataBaseSchema.PrayerTable.NAME,null,values);
     }
@@ -55,6 +89,16 @@ public class DatabaseManager {
     public DataCursor queryForPrayer(String whichColumn, String[] whichRow){
         Cursor cursor = mDataBase.query(DataBaseSchema.PrayerTable.NAME,null,whichColumn,whichRow,null,null,null);
         return new DataCursor(cursor);
+    }
+    public void clearData(){
+
+        String args[] = new String[]{fajr.getmID().toString(),duhr.getmID().toString(),asr.getmID().toString(),maghrib.getmID().toString(),isha.getmID().toString()};
+        mDataBase.delete(DataBaseSchema.PrayerTable.NAME,DataBaseSchema.PrayerTable.Cols.UUID + "=?", args);
+
+    }
+
+    public void closeDB(){
+        mDataBase.close();
     }
 
     public ArrayList<PrayerDataBaseModel> getDBPrayers(){
