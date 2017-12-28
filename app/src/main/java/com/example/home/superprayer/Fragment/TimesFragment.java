@@ -446,6 +446,8 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
                     editPrefs.putFloat(getString(R.string.lng_location),lng);
                     editPrefs.commit();
 
+                    updateTimes();
+
 
                 }
             }
