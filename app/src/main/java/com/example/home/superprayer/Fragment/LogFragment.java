@@ -1,7 +1,6 @@
 package com.example.home.superprayer.Fragment;
 
 import android.app.AlertDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -15,7 +14,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.accessibility.AccessibilityManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -53,7 +51,7 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
 
 
     private ArrayList<PrayerDataBaseModel> mPrayerList;
-    private BarChart barChart;
+    private BarChart mBarChart;
     private BarDataSet barSet;
 
     private List<BarEntry> mEntries;
@@ -67,7 +65,8 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
        // showTip(container);
 
         mPrayerList = dbManager.getDBPrayers();
-
+        mBarChart = v.findViewById(R.id.bar_char_prayer);
+        mBarChart.animateY(GraphUtility.ANIM_DURATION);
         mFajrMissedText = v.findViewById(R.id.tv_prayer_missed_count);
         mDuhrMissedText = v.findViewById(R.id.tv_prayer_missed_count2);
         mAsrMissedText = v.findViewById(R.id.tv_prayer_missed_count3);
@@ -87,35 +86,34 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
         mMaghribCount.setOnClickListener(this);
         mIshaCount.setOnClickListener(this);
 
-        barChart = v.findViewById(R.id.bar_char_prayer);
-        barChart.setNoDataText(getString(R.string.no_data_text));
-        barChart.setDrawGridBackground(false);
-        barChart.setDrawBorders(false);
-        barChart.setDragEnabled(false);
-        barChart.setScaleEnabled(false);
-        barChart.setPinchZoom(false);
-        barChart.setDoubleTapToZoomEnabled(false);
+        mBarChart.setNoDataText(getString(R.string.no_data_text));
+        mBarChart.setDrawGridBackground(false);
+        mBarChart.setDrawBorders(false);
+        mBarChart.setDragEnabled(false);
+        mBarChart.setScaleEnabled(false);
+        mBarChart.setPinchZoom(false);
+        mBarChart.setDoubleTapToZoomEnabled(false);
 
 
-        XAxis x_axis = barChart.getXAxis();
+        XAxis x_axis = mBarChart.getXAxis();
         x_axis.setDrawAxisLine(false);
         x_axis.setDrawGridLines(false);
         x_axis.setDrawLabels(false);
 
-        YAxis y_axis = barChart.getAxisRight();
+        YAxis y_axis = mBarChart.getAxisRight();
         y_axis.setDrawAxisLine(false);
         y_axis.setDrawGridLines(false);
         y_axis.setDrawLabels(false);
         y_axis.setAxisMinimum(GraphUtility.MIN);
 
-        YAxis y_axis_secondary = barChart.getAxisLeft();
+        YAxis y_axis_secondary = mBarChart.getAxisLeft();
         y_axis_secondary.setDrawAxisLine(false);
         y_axis_secondary.setDrawGridLines(true);
         y_axis_secondary.setTextSize(GraphUtility.Y_AXIS_TEXT_SIZE);
         y_axis_secondary.setAxisMinimum(GraphUtility.MIN);
         y_axis_secondary.setAxisMaximum(GraphUtility.MAX);
         y_axis_secondary.setGranularity(GraphUtility.GRANULARITY);
-        Legend legend = barChart.getLegend();
+        Legend legend = mBarChart.getLegend();
 
 
         LegendEntry[] legendEntries = new LegendEntry[5];
@@ -167,9 +165,9 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
         barSet.setColors(new int[]{R.color.colorFajr,R.color.colorDuhr,R.color.colorAsr,R.color.colorMaghrib,R.color.colorIsha}, getActivity());
         BarData barData = new BarData(barSet);
         barData.setBarWidth(4);
-        barChart.setData(barData);
+        mBarChart.setData(barData);
 
-        barChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+        mBarChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
 
@@ -238,12 +236,9 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
 
 
             }
-            barChart.notifyDataSetChanged();
-            barChart.invalidate();
+            mBarChart.notifyDataSetChanged();
+            mBarChart.invalidate();
         }
-
-
-
     }
 
     @Override
