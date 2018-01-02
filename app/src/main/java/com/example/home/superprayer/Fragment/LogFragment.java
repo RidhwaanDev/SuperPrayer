@@ -35,6 +35,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,6 +119,9 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
         y_axis_secondary.setGranularity(GraphUtility.GRANULARITY);
         Legend legend = mBarChart.getLegend();
 
+        mEntries = new ArrayList<>();
+        update();
+
 
         LegendEntry[] legendEntries = new LegendEntry[5];
         for (int i = 0;  i <= legendEntries.length ; i++){
@@ -160,13 +164,12 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
 
         setHasOptionsMenu(true);
 
-        mEntries = new ArrayList<>();
 
-        mEntries.add(new BarEntry(GraphUtility.FAJR_POS,dbManager.fajr.getmCount()));
-        mEntries.add(new BarEntry(GraphUtility.DUHR_POS,dbManager.duhr.getmCount()));
-        mEntries.add(new BarEntry(GraphUtility.ASR_POS,dbManager.asr.getmCount()));
-        mEntries.add(new BarEntry(GraphUtility.MAGHRIB_POS,dbManager.maghrib.getmCount()));
-        mEntries.add(new BarEntry(GraphUtility.ISHA_POS,dbManager.isha.getmCount()));
+     //   mEntries.add(new BarEntry(GraphUtility.FAJR_POS,dbManager.fajr.getmCount()));
+   //     mEntries.add(new BarEntry(GraphUtility.DUHR_POS,dbManager.duhr.getmCount()));
+    //    mEntries.add(new BarEntry(GraphUtility.ASR_POS,dbManager.asr.getmCount()));
+   //     mEntries.add(new BarEntry(GraphUtility.MAGHRIB_POS,dbManager.maghrib.getmCount()));
+    //    mEntries.add(new BarEntry(GraphUtility.ISHA_POS,dbManager.isha.getmCount()));
 
         barSet = new BarDataSet(mEntries,null);
         barSet.setColors(new int[]{R.color.colorFajr,R.color.colorDuhr,R.color.colorAsr,R.color.colorMaghrib,R.color.colorIsha}, getActivity());
