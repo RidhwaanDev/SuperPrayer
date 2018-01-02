@@ -15,7 +15,7 @@ Super Prayer is a modern prayer times app with a focus on prayer times, not ad r
 ## Gallery
 
 
-![Screenshot](https://imgur.com/EqlYeoy)
+![Screenshot](https://imgur.com/a/CT7l0)
 
 
 
