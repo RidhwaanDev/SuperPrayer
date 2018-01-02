@@ -70,6 +70,7 @@
                 android:layout_alignParentRight="true"
                 android:textColor="@color/label_text_color"
                 android:textStyle="bold"
+                android:text="@string/zero_missed_default"
                 android:background="@drawable/rectangle_background"
 
                />
@@ -118,6 +119,7 @@
                 android:layout_alignParentRight="true"
                 android:textColor="@color/label_text_color"
                 android:textStyle="bold"
+                android:text="@string/zero_missed_default"
                 android:background="@drawable/rectangle_background"
 
                 />
@@ -166,6 +168,7 @@
                 android:layout_alignParentRight="true"
                 android:textColor="@color/label_text_color"
                 android:textStyle="bold"
+                android:text="@string/zero_missed_default"
                 android:background="@drawable/rectangle_background"
 
                 />
@@ -214,6 +217,7 @@
                 android:layout_alignParentRight="true"
                 android:textColor="@color/label_text_color"
                 android:textStyle="bold"
+                android:text="@string/zero_missed_default"
                 android:background="@drawable/rectangle_background"
 
                 />
@@ -262,6 +266,7 @@
                 android:layout_alignParentRight="true"
                 android:textColor="@color/label_text_color"
                 android:textStyle="bold"
+                android:text="@string/zero_missed_default"
                 android:background="@drawable/rectangle_background"
 
                 />

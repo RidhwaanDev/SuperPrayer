@@ -17,6 +17,8 @@ public class PrayerModel implements Serializable {
     private String Asr;
     private String Maghrb;
     private String Isha;
+    private String Sunrise;
+    private String Sunset;
 
     public String getFajr24() {
         return Fajr;

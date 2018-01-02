@@ -71,19 +71,16 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
     private ProgressBar mPrayerProgress;
 
 
-
-
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_times_layout,container,false);
 
-        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
-        double lat = prefs.getFloat(getString(R.string.lat_location),0);
-        double lng = prefs.getFloat(getString(R.string.lng_location),0);
+       // SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+      // double lat = prefs.getFloat(getString(R.string.lat_location),0);
+      //  double lng = prefs.getFloat(getString(R.string.lng_location),0);
 
-        startService(lat,lng);
+     //   startService(lat,lng);
 
         mFajrText =  v.findViewById(R.id.fajr_time_tv);
         mDuhrText =  v.findViewById(R.id.duhr_time_tv);
@@ -196,7 +193,15 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
             mNextPrayertv.setText(R.string.prayer_next_end);
         } else {
 
-            mNextPrayertv.setText(nextprayerText + " " +"in" +" " + model.getTimeUntilNextPrayer());
+            int time  =(int)model.getTimeUntilNextPrayer();
+            int hours = time / 60;
+            int minutes = time % 60;
+            if(time > 60){
+                mNextPrayertv.setText(nextprayerText + " " +"in" +" " + hours + " " +"hours" + " " + "and" + " " + minutes + " " + "minutes");
+            } else {
+                mNextPrayertv.setText(nextprayerText + " " +"in" + " " + minutes + " " + "minutes");
+
+            }
             mPrayerProgress.setProgress((int)model.getTimeUntilNextPrayer());
         }
 
@@ -424,35 +429,41 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
             }
     }
 
-    private void getUserLocation(){
+    private void getUserLocation() {
         //  check for permission is done elsewhere. method will always be called if permission is granted
 
         Log.d("LOCATION TAG", "   " + "entered location");
-        mLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                if(location != null){
+        try {
+            mLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (location != null) {
 
-                    float lat = (float)location.getLatitude();
-                    float lng = (float)location.getLongitude();
+                        float lat = (float) location.getLatitude();
+                        float lng = (float) location.getLongitude();
 
-                    Log.d("LOCATION TAG", " Latitude" +  "   "  + lat);
-                    Log.d("LOCATION TAG", " Longitude" +  "   "  + lng);
-
-
-                    SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editPrefs = prefs.edit();
-                    editPrefs.putFloat(getString(R.string.lat_location),lat);
-                    editPrefs.putFloat(getString(R.string.lng_location),lng);
-                    editPrefs.commit();
-
-                    updateTimes();
+                        Log.d("LOCATION TAG", " Latitude" + "   " + lat);
+                        Log.d("LOCATION TAG", " Longitude" + "   " + lng);
 
 
+                        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editPrefs = prefs.edit();
+                        editPrefs.putFloat(getString(R.string.lat_location), lat);
+                        editPrefs.putFloat(getString(R.string.lng_location), lng);
+                        editPrefs.commit();
+
+                        updateTimes();
+
+
+                    }
                 }
-            }
-        });
-    }
+            });
+            } catch (SecurityException e){
+            e.printStackTrace();
+        }
+        }
+
+
 
     private BroadcastReceiver networkReciever = new BroadcastReceiver() {
         @Override
@@ -484,6 +495,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
     public void onResume() {
         super.onResume();
         getActivity().registerReceiver(networkReciever, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        updateTimes();
 
     }
 
@@ -502,3 +514,17 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

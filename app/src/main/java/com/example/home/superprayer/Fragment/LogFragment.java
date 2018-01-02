@@ -1,6 +1,7 @@
 package com.example.home.superprayer.Fragment;
 
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -18,6 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.home.superprayer.Database.DatabaseManager;
+import com.example.home.superprayer.Dialog.DataBaseClearDialog;
 import com.example.home.superprayer.Graph.GraphUtility;
 import com.example.home.superprayer.Model.PrayerDataBaseModel;
 import com.example.home.superprayer.R;
@@ -47,6 +49,7 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
 
     private RelativeLayout mFajrCount,mDuhrCount,mAsrCount,mMaghribCount,mIshaCount;
     private TextView mFajrMissedText,mDuhrMissedText,mAsrMissedText,mMaghribMissedText,mIshaMissedText;
+    private static final String CLEAR_DATA_KEY = "clear_data_base_key_unique_100";
 
 
 
@@ -117,13 +120,14 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
 
 
         LegendEntry[] legendEntries = new LegendEntry[5];
-        for (int i = 0;  i < legendEntries.length; i++){
+        for (int i = 0;  i <= legendEntries.length ; i++){
 
             switch(i){
                 case 0:
                     legendEntries[0] = new LegendEntry();
                     legendEntries[0].label = getString(R.string.string_fajr);
-                    legendEntries[0].formColor = R.color.colorFajr;
+                    legendEntries[0].formColor =  R.color.colorFajr;
+
                     break;
                 case 1:
                     legendEntries[1] = new LegendEntry();
@@ -138,30 +142,33 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
                 case 3:
                     legendEntries[3] = new LegendEntry();
                     legendEntries[3].label = getString(R.string.string_maghrib);
-                    legendEntries[3].formColor = R.color.colorMaghrib;
+                    legendEntries[3].formColor = R.color.colorDuhr;
                     break;
                 case 4:
                     legendEntries[4] = new LegendEntry();
                     legendEntries[4].label = getString(R.string.string_isha);
                     legendEntries[4].formColor= R.color.colorIsha;
+                    break;
             }
 
         }
 
-        legend.setCustom(legendEntries);
+
+       // int colors[] = new int[]{(R.color.colorFajr),R.color.colorDuhr,R.color.colorAsr,R.color.colorMaghrib,R.color.colorIsha };
+      //  String labels[] = new String[]{getString(R.string.string_duhr),getString(R.string.string_asr),getString(R.string.string_maghrib),getString(R.string.string_isha)};
+       // legend.setExtra(colors,labels);
 
         setHasOptionsMenu(true);
 
         mEntries = new ArrayList<>();
-        update();
 
-     //   mEntries.add(new BarEntry(GraphUtility.FAJR_POS,dbManager.fajr.getmCount()));
-     //   mEntries.add(new BarEntry(GraphUtility.DUHR_POS,dbManager.duhr.getmCount()));
-     //   mEntries.add(new BarEntry(GraphUtility.ASR_POS,dbManager.asr.getmCount()));
-    //    mEntries.add(new BarEntry(GraphUtility.MAGHRIB_POS,dbManager.maghrib.getmCount()));
-    //    mEntries.add(new BarEntry(GraphUtility.ISHA_POS,dbManager.isha.getmCount()));
+        mEntries.add(new BarEntry(GraphUtility.FAJR_POS,dbManager.fajr.getmCount()));
+        mEntries.add(new BarEntry(GraphUtility.DUHR_POS,dbManager.duhr.getmCount()));
+        mEntries.add(new BarEntry(GraphUtility.ASR_POS,dbManager.asr.getmCount()));
+        mEntries.add(new BarEntry(GraphUtility.MAGHRIB_POS,dbManager.maghrib.getmCount()));
+        mEntries.add(new BarEntry(GraphUtility.ISHA_POS,dbManager.isha.getmCount()));
 
-        barSet = new BarDataSet(mEntries,"Prayer Log");
+        barSet = new BarDataSet(mEntries,null);
         barSet.setColors(new int[]{R.color.colorFajr,R.color.colorDuhr,R.color.colorAsr,R.color.colorMaghrib,R.color.colorIsha}, getActivity());
         BarData barData = new BarData(barSet);
         barData.setBarWidth(4);
@@ -214,7 +221,6 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
                 mEntries.add(new BarEntry(GraphUtility.DUHR_POS,model.getmCount()));
                 mDuhrMissedText.setText(model.getmCount() + " " +"missed");
 
-
             }
 
             if(model.getmID().equals(dbManager.asr.getmID())){
@@ -243,11 +249,11 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
 
     @Override
     public void onClick(View view) {
-
+            ArrayList<PrayerDataBaseModel> list = dbManager.getDBPrayers();
         int id = view.getId();
         switch (id) {
             case R.id.fajr_missed_view:
-                for (PrayerDataBaseModel model: mPrayerList) {
+                for (PrayerDataBaseModel model: list) {
                     if(model.getmID().equals(dbManager.fajr.getmID())){
                         Log.d("ENTRY TAG", " ENTERED");
                         model.setmCount(model.getmCount() + 1);
@@ -257,7 +263,7 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
                 }
                 break;
             case R.id.duhr_missed_view:
-                for (PrayerDataBaseModel model: mPrayerList) {
+                for (PrayerDataBaseModel model: list) {
                     if(model.getmID().equals(dbManager.duhr.getmID())){
                         Log.d("ENTRY TAG", " ENTERED");
                         model.setmCount(model.getmCount() + 1);
@@ -267,7 +273,7 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
                 }
                 break;
             case R.id.asr_view:
-                for (PrayerDataBaseModel model: mPrayerList) {
+                for (PrayerDataBaseModel model: list) {
                     if(model.getmID().equals(dbManager.asr.getmID())){
                         Log.d("ENTRY TAG", " ENTERED");
                         model.setmCount(model.getmCount() + 1);
@@ -275,8 +281,9 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
                         update();
                     }
                 }
+                break;
             case R.id.maghrib_view:
-                for (PrayerDataBaseModel model: mPrayerList) {
+                for (PrayerDataBaseModel model: list) {
                     if(model.getmID().equals(dbManager.maghrib.getmID())){
                         Log.d("ENTRY TAG", " ENTERED");
                         model.setmCount(model.getmCount() + 1);
@@ -286,7 +293,7 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
                 }
                 break;
             case R.id.isha_view:
-                for (PrayerDataBaseModel model: mPrayerList) {
+                for (PrayerDataBaseModel model: list) {
                     if(model.getmID().equals(dbManager.isha.getmID())){
                         Log.d("ENTRY TAG", " ENTERED");
                         model.setmCount(model.getmCount() + 1);
@@ -319,34 +326,17 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
 
             case R.id.delete_database:
 
-                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which){
-                            case DialogInterface.BUTTON_POSITIVE:
-                                //Yes button clicked
+                //Yes button clicked
+                android.support.v4.app.FragmentManager fg = getFragmentManager();
+                DataBaseClearDialog dataBaseClearDialog = new DataBaseClearDialog();
+             //   dataBaseClearDialog.show(fg,CLEAR_DATA_KEY);
 
-                                for (PrayerDataBaseModel model: testList) {
+                for (PrayerDataBaseModel model : testList) {
+                    model.setmCount(0);
+                    dbManager.updatePrayer(model);
+                }
 
-                                    Log.d("ENTRY TAG", " ENTERED");
-                                    model.setmCount(0);
-                                    dbManager.updatePrayer(model);
-                                    update();
-
-                                }
-
-                                break;
-
-                            case DialogInterface.BUTTON_NEGATIVE:
-                                //No button clicked
-                                break;
-                        }
-                    }
-                };
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage("Are you sure you want to delete your log?").setPositiveButton("Yes", dialogClickListener)
-                        .setNegativeButton("No", dialogClickListener).show();
+                 update();
 
                 break;
 

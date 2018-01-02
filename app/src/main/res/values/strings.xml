@@ -4,7 +4,7 @@
     <string name="log_frag">Log</string>
     <string name="compass_frag">Compass</string>
 
-    <string name="network_check">No network found. Can\'t update times</string>
+    <string name="network_check">Network disconnected. Times wont update</string>
     <string name="network_check_success">Updating times</string>
 
     <string name="shared_prefs_key">prayer_times_storeage</string>
@@ -41,8 +41,10 @@
     <string name="log_tip">Click on the label to add</string>
     <string name="never_show_again">Never show again</string>
     <string name="prefs_never_show_again">never_show_again_perfs_entry_1000</string>
+    <string name="confirm_delete">Are you sure you want to delete your log? </string>
 
 
+    <string name="zero_missed_default">0 missed</string>
 
 
 

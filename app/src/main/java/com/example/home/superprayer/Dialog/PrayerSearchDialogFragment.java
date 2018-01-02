@@ -6,6 +6,9 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +36,6 @@ public class PrayerSearchDialogFragment extends DialogFragment implements NetWor
     public static final String KEY_PUT_LNG_FROMSHARED = "LNG_DEFAULT";
 
     private NetworkRequest mNetworkRequest;
-
     private PrayerDialogModel mPlaceModel;
 
     private TextView mFajrText,
@@ -51,7 +53,6 @@ public class PrayerSearchDialogFragment extends DialogFragment implements NetWor
 
         mNetworkRequest = new NetworkRequest(getActivity());
         mNetworkRequest.mResponse = this;
-
 
         mFajrText =  v.findViewById(R.id.fajr_time_tv);
         mDuhrText =  v.findViewById(R.id.duhr_time_tv);
