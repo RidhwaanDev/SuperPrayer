@@ -1,32 +1,23 @@
 package com.example.home.superprayer.Dialog;
 
 import android.annotation.SuppressLint;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.FragmentManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.home.superprayer.Model.PrayerDateModel;
 import com.example.home.superprayer.Model.PrayerModel;
-import com.example.home.superprayer.Network.NetWorkResponse;
+import com.example.home.superprayer.Interface.NetWorkResponse;
 import com.example.home.superprayer.Network.NetworkRequest;
 import com.example.home.superprayer.R;
-import com.google.android.gms.location.places.Place;
 
 import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 /**
  * Created by Home on 12/1/2017.

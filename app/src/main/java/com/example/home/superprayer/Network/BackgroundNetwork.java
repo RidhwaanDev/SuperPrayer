@@ -15,6 +15,7 @@ import android.util.Log;
 
 import com.example.home.superprayer.Activity.DashboardActivity;
 import com.example.home.superprayer.Fragment.TimesFragment;
+import com.example.home.superprayer.Interface.NetWorkResponse;
 import com.example.home.superprayer.Model.PrayerModel;
 import com.example.home.superprayer.Model.PrayerNextModel;
 import com.example.home.superprayer.R;

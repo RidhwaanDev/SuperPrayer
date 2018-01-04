@@ -27,7 +27,7 @@ import com.example.home.superprayer.Model.NextPrayerEnum;
 import com.example.home.superprayer.Model.PrayerModel;
 import com.example.home.superprayer.Model.PrayerNextModel;
 import com.example.home.superprayer.Network.BackgroundNetwork;
-import com.example.home.superprayer.Network.NetWorkResponse;
+import com.example.home.superprayer.Interface.NetWorkResponse;
 import com.example.home.superprayer.Network.NetworkQueue;
 import com.example.home.superprayer.Network.NetworkRequest;
 import com.example.home.superprayer.R;
@@ -48,7 +48,6 @@ import java.util.Date;
 public class TimesFragment extends Fragment implements NetWorkResponse {
     private NetworkQueue mNetWorkQueue;
     private FusedLocationProviderClient mLocationClient;
-
     private static final int MY_REQUEST_LOCATION_PERMISSION = 1000;
     private static final String MY_NOTIFICATION_CHANNEL_ID = "my_channel_id_0001";
 
@@ -82,6 +81,9 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
      //   startService(lat,lng);
 
+
+
+
         mFajrText =  v.findViewById(R.id.fajr_time_tv);
         mDuhrText =  v.findViewById(R.id.duhr_time_tv);
         mAsrText =  v.findViewById(R.id.asr_time_tv);
@@ -104,7 +106,8 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
         int checkPermissionLocation = ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION);
         if(checkPermissionLocation == PackageManager.PERMISSION_GRANTED) {
-                getUserLocation();
+               getUserLocation();
+
 
         } else {
             ActivityCompat.requestPermissions(getActivity(),new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},MY_REQUEST_LOCATION_PERMISSION);
@@ -112,9 +115,6 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
         return v;
     }
-
-
-
 
     @Override
     public void onDownloadedData(PrayerModel model) {
@@ -423,6 +423,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
                 case MY_REQUEST_LOCATION_PERMISSION:
                     if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                             getUserLocation();
+                        return;
                     } else {
                         Toast.makeText(getActivity(),R.string.location_permission_denied,Toast.LENGTH_LONG).show();
                     }
@@ -453,6 +454,10 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
                         editPrefs.commit();
 
                         updateTimes();
+
+
+                    } else {
+                        // 1. Brand new phone, no last known location. 2. Location turned off. 3. Google play devices has restarted
 
 
                     }

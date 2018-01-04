@@ -1,4 +1,4 @@
-package com.example.home.superprayer.Network;
+package com.example.home.superprayer.Interface;
 
 import com.example.home.superprayer.Model.PrayerModel;
 
