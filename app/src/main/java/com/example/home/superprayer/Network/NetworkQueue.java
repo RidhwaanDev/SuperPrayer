@@ -1,6 +1,7 @@
 package com.example.home.superprayer.Network;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
@@ -51,6 +52,8 @@ public class NetworkQueue {
         boolean isConnected = networkActivityState != null && networkActivityState.isConnectedOrConnecting();
         return isConnected;
     }
+
+
 
     public static void setPrayerInstance(PrayerModel model){
         mPrayer = model;

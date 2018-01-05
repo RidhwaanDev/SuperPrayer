@@ -20,6 +20,22 @@ public class PrayerModel implements Serializable {
     private String Sunrise;
     private String Sunset;
 
+    public String getSunrise() {
+        return format12Hour(Sunrise);
+    }
+
+    public void setSunrise(String sunrise) {
+        Sunrise = sunrise;
+    }
+
+    public String getSunset() {
+        return format12Hour(Sunset);
+    }
+
+    public void setSunset(String sunset) {
+        Sunset = sunset;
+    }
+
     public String getFajr24() {
         return Fajr;
     }

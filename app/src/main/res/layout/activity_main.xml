@@ -14,20 +14,14 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
-
         >
-
         <include
             layout="@layout/navigation_action"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         </include>
 
-
-
         <RelativeLayout
-
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.home.superprayer.Activity.DashboardActivity">
@@ -37,8 +31,53 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/fragment_layout_id"
+            >
+        <RelativeLayout
+            android:id="@+id/rl_warning_root_container"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
 
-        >
+            >
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                >
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/lottie_warning_anim"
+                    android:layout_width="wrap_content"
+                    android:layout_height="256dp"
+                    android:layout_marginBottom="32dp"
+                    app:lottie_loop="true"
+                    app:lottie_autoPlay="true"
+                    app:lottie_fileName="warning.json"
+                    />
+                <TextView
+                    android:layout_marginTop="32dp"
+                    android:layout_below="@+id/lottie_warning_anim"
+                    android:gravity="center"
+                    android:id="@+id/tv_retry_wifi"
+                    android:textSize="18dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:text="@string/tv_retry"
+
+                    />
+            </LinearLayout>
+
+
+
+
+        </RelativeLayout>
+
 
     </FrameLayout>
 
@@ -54,7 +93,6 @@
         app:menu="@menu/bottom_navigation_menu"
         />
 
-
 </RelativeLayout>
     </LinearLayout>
 
@@ -66,9 +104,5 @@
         app:headerLayout="@layout/nav_header"
         >
     </android.support.design.widget.NavigationView>
-
-
-
-
 
 </android.support.v4.widget.DrawerLayout>

@@ -67,7 +67,9 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
             mDuhrText,
             mAsrText,
             mMaghrebText,
-            mIshaText;
+            mIshaText,
+            mSunriseText,
+            mSunsetText;
 
     private TextView mNextPrayertv;
 
@@ -94,6 +96,9 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         mAsrText =  v.findViewById(R.id.asr_time_tv);
         mMaghrebText =  v.findViewById(R.id.maghrib_time_tv);
         mIshaText =  v.findViewById(R.id.isha_time_tv);
+        mSunriseText = v.findViewById(R.id.tv_sunrise_data);
+        mSunsetText = v.findViewById(R.id.tv_sunset_data);
+
 
         mNextPrayertv = v.findViewById(R.id.tv_next_prayer);
 
@@ -178,6 +183,8 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
              mAsrText.setText(model.getAsr());
              mMaghrebText.setText(model.getMaghrb());
              mIshaText.setText(model.getIsha());
+             mSunriseText.setText(model.getSunrise());
+             mSunsetText.setText(model.getSunset());
 
 
     }
@@ -344,6 +351,11 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         NetworkRequest requestTimes = new NetworkRequest(getActivity());
         requestTimes.mResponse = this;
         requestTimes.requestPrayerTimeSingle(requestPath);
+    }
+
+    private boolean isPrayerModelCached(){
+        Object obj = getCurrentModel();
+        return obj != null;
     }
 
     public void reloadTimes(){

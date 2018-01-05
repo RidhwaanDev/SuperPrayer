@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.wifi.WifiConfiguration;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -28,7 +29,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.DatePicker;
+import android.widget.RelativeLayout;
+import android.widget.TextClock;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.home.superprayer.Dialog.LocationRequestDialog;
@@ -38,6 +43,7 @@ import com.example.home.superprayer.Fragment.LogFragment;
 import com.example.home.superprayer.Dialog.PrayerSearchDialogFragment;
 import com.example.home.superprayer.Fragment.TimesFragment;
 import com.example.home.superprayer.Model.PrayerDateModel;
+import com.example.home.superprayer.Model.PrayerModel;
 import com.example.home.superprayer.Network.NetworkQueue;
 import com.example.home.superprayer.R;
 import com.example.home.superprayer.Util.LocationUtil;
@@ -57,6 +63,7 @@ import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import  com.google.android.gms.tasks.Task;
+import com.google.gson.Gson;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -125,19 +132,41 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_hamburger_menu);
            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
-
-        //mRootViewPager =  findViewById(R.id.fragment_view_pager);
-     //   myViewPagerAdapter = new MyViewPagerAdapter(getSupportFragmentManager());
-     //   mRootViewPager.setAdapter(myViewPagerAdapter);
     }
 
     private void initfragment(){
 
-            TimesFragment currentFragment = new TimesFragment();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_layout_id, currentFragment, "Prayer Times");
+        TimesFragment currentFragment = new TimesFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_layout_id, currentFragment, "Prayer Times");
+        /**
+         *
+         * initfragment calls guarantees that we have a location
+         *
+         */
+        if(NetworkQueue.isConnected(this) || isPrayerCached()){
             transaction.commit();
+        } else {
+            showNoNetworkError();
+        }
+
+
+         //   transaction.commit();
+
+    }
+    private void showNoNetworkError(){
+
+        RelativeLayout warningLayout = findViewById(R.id.rl_warning_root_container);
+        warningLayout.setVisibility(View.VISIBLE);
+
+        TextView retyTextView = findViewById(R.id.tv_retry_wifi);
+        retyTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("RETRY WIFI TV", "  RETRYING  WIFI   ");
+                initfragment();
+            }
+        });
 
     }
 
@@ -148,7 +177,8 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
 
     }
 
-    private boolean isLocationCached(){
+
+    private  boolean isLocationCached(){
         SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
         return (prefs.getFloat(getString(R.string.lat_location),0) != 0.0);
 
@@ -169,6 +199,16 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
         editPrefs.putFloat(getString(R.string.lng_location), lng);
         editPrefs.commit();
 
+    }
+    private boolean isPrayerCached(){
+
+        SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
+
+        Gson gson = new Gson();
+        String unpackagedText = prefs.getString(getString(R.string.shared_prefs_key),"");
+        PrayerModel model = gson.fromJson(unpackagedText,PrayerModel.class);
+
+        return  model != null;
     }
 
     @SuppressLint("MissingPermission")
@@ -209,7 +249,7 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
     }
 
      private void requestLocationPermission() {
-         ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, MY_REQUEST_LOCATION_PERMISSION);
+         ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.CHANGE_WIFI_STATE}, MY_REQUEST_LOCATION_PERMISSION);
      }
 
     @Override
@@ -417,23 +457,32 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
                     Toast.makeText(this,place.getName() + "  "  + place.getLatLng().toString(),Toast.LENGTH_SHORT).show();
                     break;
                 case REQUEST_CHECK_SETTINGS:
-                    LocationSettingsStates locState = LocationSettingsStates.fromIntent(data);
-                    if(locState.isLocationPresent() && locState.isLocationUsable()){
-                        updateLocation();
-                    } else {
-                        // handle
-                        LocationRequestDialog dialog = LocationRequestDialog.newInstance();
-                        dialog.show(getSupportFragmentManager(),CODE_SHOW_LOCATION_REQUEST_DIALOG);
 
-                    }
+                        LocationSettingsStates locState = LocationSettingsStates.fromIntent(data);
+                        if (locState.isLocationPresent() && locState.isLocationUsable()) {
+                            updateLocation();
+                        }
+
                     break;
             }
 
 
         } else if (resultCode == Activity.RESULT_CANCELED){
 
-            Status status = PlaceAutocomplete.getStatus(this,data);
-            Log.d("PLACE AUTO COMPLETE", "    " + status.getStatus().toString());
+            switch (requestCode){
+
+                case REQUEST_PLACE_AUTO_COMPLETE:
+                    Status status = PlaceAutocomplete.getStatus(this,data);
+                    Log.d("PLACE AUTO COMPLETE", "    " + status.getStatus().toString());
+                    break;
+
+                case REQUEST_CHECK_SETTINGS:
+                    LocationRequestDialog dialog = LocationRequestDialog.newInstance();
+                    dialog.show(getSupportFragmentManager(),CODE_SHOW_LOCATION_REQUEST_DIALOG);
+                    break;
+            }
+
+
 
         } else if (resultCode != Activity.RESULT_OK) {
             Toast.makeText(this,"Error. Can not search times", Toast.LENGTH_SHORT).show();

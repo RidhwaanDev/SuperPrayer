@@ -18,6 +18,12 @@
     <string name="string_maghrib">Maghrib</string>
     <string name="string_isha">Isha</string>
     <string name="next_prayer_header">Next prayer</string>
+    <string name="sunrise_sunset_header"> Sunrise/Sunset.</string>
+    <string name="tv_sunrise"> Sunrise:</string>
+    <string name="tv_sunset"> Sunset:</string>
+    <string name="tv_retry">Failed to find network. Tap to retry</string>
+
+
 
     <string name="string_not_yet_loaded">-- --</string>
     <string name="prayer_next_end"> All done for Today!</string>

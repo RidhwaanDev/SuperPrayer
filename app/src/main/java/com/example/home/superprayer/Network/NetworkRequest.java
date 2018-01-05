@@ -56,6 +56,8 @@ public class NetworkRequest {
                         String asr = dataOBJ.getString("Asr");
                         String maghrib = dataOBJ.getString("Maghrib");
                         String isha = dataOBJ.getString("Isha");
+                        String sunrse = dataOBJ.getString("Sunrise");
+                        String sunset = dataOBJ.getString("Sunset");
 
                         PrayerModel model = new PrayerModel();
                         model.setFajr(fajr);
@@ -63,6 +65,8 @@ public class NetworkRequest {
                         model.setAsr(asr);
                         model.setMaghrb(maghrib);
                         model.setIsha(isha);
+                        model.setSunrise(sunrse);
+                        model.setSunset(sunset);
 
                         mResponse.onDownloadedData(model);
 
