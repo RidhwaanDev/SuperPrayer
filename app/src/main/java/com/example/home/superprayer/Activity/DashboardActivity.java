@@ -63,8 +63,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class DashboardActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
-
-
     //constant key/code vars
 
     private static final String CODE_SHOW_PRAYER_DIALOG = "SHOW PRAYER DIALOG PLEASE";
@@ -82,14 +80,11 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
     private FusedLocationProviderClient mFusedLocation;
 
 
-
-
     //view vars
     private BottomNavigationView mBottomNav;
     private DrawerLayout mDrawerNav;
     private ActionBarDrawerToggle mToggle;
     private Toolbar mToolBar;
-
 
 
     @Override
@@ -146,34 +141,10 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
 
     }
 
-
-    /**
-     * Logic for getting location
-     *
-     * 1. Request location permission
-     *  a. if granted
-     *     1.) Check if location is on
-     *        a_1: if on, then add to shared prefs and continue.
-     *        a_2: if not on, then get user to turn it on.
-     *              - If they reject it then ask to enter manually
-     *                    - if they reject manually then close the app
-     *
-     *
-     *
-     *
-     */
-
-
     private boolean isLocationPermissionExist(){
 
         int checkPermissionCode = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
-        if(checkPermissionCode == PackageManager.PERMISSION_GRANTED){
-            return true;
-
-        } else {
-            requestLocationPermission();
-            return false;
-        }
+      return ( checkPermissionCode == PackageManager.PERMISSION_GRANTED);
 
     }
 
@@ -199,7 +170,6 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
         editPrefs.commit();
 
     }
-
 
     @SuppressLint("MissingPermission")
     private void updateLocation(){
@@ -238,11 +208,27 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
         mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_UPDATE_INTERVAL, LOCATION_UPDATE_INTERVAL, mLocationListener);
     }
 
-
-
      private void requestLocationPermission() {
          ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, MY_REQUEST_LOCATION_PERMISSION);
      }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case MY_REQUEST_LOCATION_PERMISSION:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Log.d("REQUEST PERMISSON", "    " + "permission granted");
+                    // updateLocation();
+                    updateWithLastKnownLocation();
+                } else {
+                    Toast.makeText(DashboardActivity.this,R.string.location_permission_denied,Toast.LENGTH_LONG).show();
+                    LocationRequestDialog requestDialog = LocationRequestDialog.newInstance();
+                    requestDialog.show(getSupportFragmentManager(),CODE_SHOW_LOCATION_REQUEST_DIALOG);
+
+                }
+                break;
+        }
+    }
 
    protected void resolveLocationSettings(){
        /**
@@ -272,7 +258,6 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
             }
         });
 
-
          task.addOnFailureListener(this,new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
@@ -293,7 +278,6 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
 
    @SuppressLint("MissingPermission")
    private void updateWithLastKnownLocation(){
-
 
            if(isLocationPermissionExist()) {
                mFusedLocation.getLastLocation().addOnSuccessListener(this,new OnSuccessListener<Location>() {
@@ -319,32 +303,8 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
            } else {
                requestLocationPermission();
            }
-
-
-
        }
 
-
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
-            case MY_REQUEST_LOCATION_PERMISSION:
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    Log.d("REQUEST PERMISSON", "    " + "permission granted");
-                       // updateLocation();
-                        updateWithLastKnownLocation();
-                        break;
-                } else {
-                    Toast.makeText(DashboardActivity.this,R.string.location_permission_denied,Toast.LENGTH_LONG).show();
-                    LocationRequestDialog requestDialog = LocationRequestDialog.newInstance();
-                    requestDialog.show(getSupportFragmentManager(),CODE_SHOW_LOCATION_REQUEST_DIALOG);
-
-                }
-                break;
-        }
-    }
 
 
     @Override
@@ -373,12 +333,10 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
                 return true;
 
                 default:
-
         }
 
         return super.onOptionsItemSelected(item);
     }
-
 
     private DatePickerDialog createDatePickerDialog(Date mDate){
 
@@ -464,6 +422,8 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
                         updateLocation();
                     } else {
                         // handle
+                        LocationRequestDialog dialog = LocationRequestDialog.newInstance();
+                        dialog.show(getSupportFragmentManager(),CODE_SHOW_LOCATION_REQUEST_DIALOG);
 
                     }
                     break;
@@ -481,8 +441,6 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
         }
 
     }
-
-
 
     private BottomNavigationView.OnNavigationItemSelectedListener listener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
@@ -528,7 +486,6 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
                         CURRENT_FRAG = 3;
 
                         return true;
-
                 }
 
          return false;

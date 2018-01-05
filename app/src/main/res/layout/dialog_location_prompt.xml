@@ -47,6 +47,7 @@
         <ImageView
             android:layout_toRightOf="@+id/prayer_image_view_fajr"
             android:src="@drawable/ic_dialog_location_manual_24dp"
+            android:id="@+id/iv_manual_edit"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="4dp"
             android:layout_width="wrap_content"
@@ -55,16 +56,15 @@
             />
 
         <TextView
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="4dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18dp"
-            android:layout_margin="4dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
+            android:layout_marginLeft="12dp"
+            android:layout_marginTop="4dp"
+            android:layout_toRightOf="@+id/iv_manual_edit"
             android:text="@string/dialog_location_manual_option"
             />
+
     </RelativeLayout>
 
 
@@ -76,6 +76,7 @@
 
 
         <ImageView
+            android:id="@+id/iv_reject"
             android:layout_toRightOf="@+id/prayer_image_view_fajr"
             android:src="@drawable/ic_dialog_location_reject_24dp"
             android:layout_marginLeft="8dp"
@@ -86,15 +87,14 @@
             />
 
         <TextView
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="4dp"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18dp"
-            android:layout_margin="4dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             android:gravity="end"
+            android:layout_marginLeft="12dp"
+            android:layout_marginTop="4dp"
+            android:layout_toRightOf="@id/iv_reject"
             android:text="@string/dialog_location_reject_option"
             />
 
