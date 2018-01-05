@@ -8,6 +8,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -47,7 +49,10 @@ import java.util.Date;
 
 public class TimesFragment extends Fragment implements NetWorkResponse {
     private NetworkQueue mNetWorkQueue;
-    private FusedLocationProviderClient mLocationClient;
+
+
+
+
     private static final int MY_REQUEST_LOCATION_PERMISSION = 1000;
     private static final String MY_NOTIFICATION_CHANNEL_ID = "my_channel_id_0001";
 
@@ -70,6 +75,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
     private ProgressBar mPrayerProgress;
 
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -80,7 +86,6 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
       //  double lng = prefs.getFloat(getString(R.string.lng_location),0);
 
      //   startService(lat,lng);
-
 
 
 
@@ -102,16 +107,8 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         getActivity().registerReceiver(networkReciever,new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         mNetWorkQueue = NetworkQueue.getInstance(getActivity());
 
-        mLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        getUserLocation();
 
-        int checkPermissionLocation = ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION);
-        if(checkPermissionLocation == PackageManager.PERMISSION_GRANTED) {
-               getUserLocation();
-
-
-        } else {
-            ActivityCompat.requestPermissions(getActivity(),new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},MY_REQUEST_LOCATION_PERMISSION);
-        }
 
         return v;
     }
@@ -417,58 +414,27 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-            switch (requestCode){
-                case MY_REQUEST_LOCATION_PERMISSION:
-                    if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                            getUserLocation();
-                        return;
-                    } else {
-                        Toast.makeText(getActivity(),R.string.location_permission_denied,Toast.LENGTH_LONG).show();
-                    }
-            }
-    }
+
 
     private void getUserLocation() {
-        //  check for permission is done elsewhere. method will always be called if permission is granted
+        //  check for permission is done elsewhere. method will always be called if permission is grante
 
-        Log.d("LOCATION TAG", "   " + "entered location");
-        try {
-            mLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    if (location != null) {
+        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
 
-                        float lat = (float) location.getLatitude();
-                        float lng = (float) location.getLongitude();
+            float lat  =prefs.getFloat(getString(R.string.lat_location),0);
+            float lng = prefs.getFloat(getString(R.string.lng_location), 0);
 
-                        Log.d("LOCATION TAG", " Latitude" + "   " + lat);
-                        Log.d("LOCATION TAG", " Longitude" + "   " + lng);
-
-
-                        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editPrefs = prefs.edit();
-                        editPrefs.putFloat(getString(R.string.lat_location), lat);
-                        editPrefs.putFloat(getString(R.string.lng_location), lng);
-                        editPrefs.commit();
-
-                        updateTimes();
-
-
-                    } else {
-                        // 1. Brand new phone, no last known location. 2. Location turned off. 3. Google play devices has restarted
-
-
-                    }
+            if(lat == 0 || lng == 0){
+                try {
+                }  catch (SecurityException e){
+                    e.printStackTrace();
                 }
-            });
-            } catch (SecurityException e){
-            e.printStackTrace();
-        }
-        }
 
+                } else {
 
+                updateTimes();
+            }
+    }
 
     private BroadcastReceiver networkReciever = new BroadcastReceiver() {
         @Override
@@ -514,7 +480,6 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
     public void onDestroy() {
         super.onDestroy();
         mNetWorkQueue = null;
-        mLocationClient = null;
     }
 
 

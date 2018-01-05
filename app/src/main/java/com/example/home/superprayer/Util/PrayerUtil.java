@@ -1,4 +1,4 @@
-package com.example.home.superprayer;
+package com.example.home.superprayer.Util;
 
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -15,19 +15,16 @@ import java.util.Date;
 
 /**
  * Created by Home on 12/11/2017.
+ *
+ * This class is unused but is kept for possible later use
+ *
+ *
+ *
+ *
  */
 
 public class PrayerUtil {
 
-
-
-
-    void fakeMethod(){
-
-
-
-
-    }
 
 
     private enum CurrentPrayer {FAJR,DUHR,ASR,MAGHRIB,ISHA,END}
