@@ -19,7 +19,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -44,7 +43,7 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
@@ -53,7 +52,6 @@ import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import  com.google.android.gms.tasks.Task;
@@ -76,6 +74,7 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
 
     // logic vars
     private LocationManager mLocationManager;
+    private FusedLocationProviderClient mFusedLocation;
 
 
 
@@ -97,10 +96,18 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
              setSupportActionBar(mToolBar);
 
              mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+             mFusedLocation = LocationServices.getFusedLocationProviderClient(this);
+
+
+
              if(!isLocationPermissionExist()){
                  requestLocationPermission();
              } else {
-                 resolveLocationSettings();
+                 if(isLocationCached()){
+                     initfragment();
+                 } else {
+                     updateWithLastKnownLocation();
+                 }
              }
 
 
@@ -165,28 +172,40 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
 
     }
 
+    private boolean isLocationCached(){
+        SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
+        return (prefs.getFloat(getString(R.string.lat_location),0) != 0.0);
+
+    }
+
+    private void updateLatLngPrefs(Location location){
+
+        float lat = (float) location.getLatitude();
+        float lng = (float) location.getLongitude();
+
+        Log.d("LOCATION TAG DASHBOARD", " Latitude" + "   " + lat);
+        Log.d("LOCATION TAG DASHBOARD", " Longitude" + "   " + lng);
+
+
+        SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editPrefs = prefs.edit();
+        editPrefs.putFloat(getString(R.string.lat_location), lat);
+        editPrefs.putFloat(getString(R.string.lng_location), lng);
+        editPrefs.commit();
+
+    }
+
 
     @SuppressLint("MissingPermission")
     private void updateLocation(){
+
         Log.d("UPDATING LOCATION TAG", "  " + "location being updated");
         LocationListener mLocationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 if (location != null) {
 
-                    float lat = (float) location.getLatitude();
-                    float lng = (float) location.getLongitude();
-
-                    Log.d("LOCATION TAG DASHBOARD", " Latitude" + "   " + lat);
-                    Log.d("LOCATION TAG DASHBOARD", " Longitude" + "   " + lng);
-
-
-                    SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editPrefs = prefs.edit();
-                    editPrefs.putFloat(getString(R.string.lat_location), lat);
-                    editPrefs.putFloat(getString(R.string.lng_location), lng);
-                    editPrefs.commit();
-
+                    updateLatLngPrefs(location);
                     initfragment();
 
                 } else {
@@ -243,6 +262,7 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
                LocationSettingsStates locState = locationSettingsResponse.getLocationSettingsStates();
                 if(locState.isLocationPresent() && locState.isLocationUsable()){
                     updateLocation();
+
                 }
             }
         });
@@ -266,6 +286,40 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
         });
    }
 
+   @SuppressLint("MissingPermission")
+   private void updateWithLastKnownLocation(){
+
+
+           if(isLocationPermissionExist()) {
+               mFusedLocation.getLastLocation().addOnSuccessListener(this,new OnSuccessListener<Location>() {
+                   @Override
+                   public void onSuccess(Location location) {
+                       if(location != null){
+                           updateLatLngPrefs(location);
+                           initfragment();
+
+                       } else {
+                           resolveLocationSettings();
+                       }
+
+                   }
+               });
+
+               mFusedLocation.getLastLocation().addOnFailureListener(this, new OnFailureListener() {
+                   @Override
+                   public void onFailure(@NonNull Exception e) {
+                       updateLocation();
+                   }
+               });
+           } else {
+               requestLocationPermission();
+           }
+
+
+
+       }
+
+
 
 
     @Override
@@ -274,7 +328,8 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
             case MY_REQUEST_LOCATION_PERMISSION:
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     Log.d("REQUEST PERMISSON", "    " + "permission granted");
-                        updateLocation();
+                       // updateLocation();
+                        updateWithLastKnownLocation();
                 } else {
                     Toast.makeText(DashboardActivity.this,R.string.location_permission_denied,Toast.LENGTH_LONG).show();
                     //offer to enter manually
