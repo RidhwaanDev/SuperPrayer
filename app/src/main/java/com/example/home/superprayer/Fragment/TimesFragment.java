@@ -107,8 +107,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         getActivity().registerReceiver(networkReciever,new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         mNetWorkQueue = NetworkQueue.getInstance(getActivity());
 
-        getUserLocation();
-
+        updateTimes();
 
         return v;
     }
@@ -417,9 +416,8 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
 
     private void getUserLocation() {
-        //  check for permission is done elsewhere. method will always be called if permission is grante
 
-        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+              SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
 
             float lat  =prefs.getFloat(getString(R.string.lat_location),0);
             float lng = prefs.getFloat(getString(R.string.lng_location), 0);

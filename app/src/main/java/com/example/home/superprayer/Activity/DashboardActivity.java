@@ -55,6 +55,7 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import  com.google.android.gms.tasks.Task;
 
 import java.util.Calendar;
@@ -99,7 +100,7 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
              if(!isLocationPermissionExist()){
                  requestLocationPermission();
              } else {
-                requestLocationUpdates();
+                 resolveLocationSettings();
              }
 
 
@@ -134,16 +135,6 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
     }
 
 
-    private boolean isLocationOn(){
-
-        boolean isLocationEnabled = mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        boolean isGpsEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        return isLocationEnabled && isGpsEnabled;
-
-
-    }
-
     /**
      * Logic for getting location
      *
@@ -174,132 +165,68 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
 
     }
 
+
     @SuppressLint("MissingPermission")
-    private void requestLocationUpdates(){
+    private void updateLocation(){
+        Log.d("UPDATING LOCATION TAG", "  " + "location being updated");
+        LocationListener mLocationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                if (location != null) {
 
-        //permission checked in isLocationPermissionExist
-        Log.d("REQUESTING  UPDATES", "  LOCATION UPDATES REQUESTED");
+                    float lat = (float) location.getLatitude();
+                    float lng = (float) location.getLongitude();
 
-        if(isLocationPermissionExist()) {
-            if (isLocationOn()) {
-                LocationListener mLocationListener = new LocationListener() {
-                    @Override
-                    public void onLocationChanged(Location location) {
-                        if (location != null) {
-
-                            float lat = (float) location.getLatitude();
-                            float lng = (float) location.getLongitude();
-
-                            Log.d("LOCATION TAG DASHBOARD", " Latitude" + "   " + lat);
-                            Log.d("LOCATION TAG DASHBOARD", " Longitude" + "   " + lng);
+                    Log.d("LOCATION TAG DASHBOARD", " Latitude" + "   " + lat);
+                    Log.d("LOCATION TAG DASHBOARD", " Longitude" + "   " + lng);
 
 
-                            SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editPrefs = prefs.edit();
-                            editPrefs.putFloat(getString(R.string.lat_location), lat);
-                            editPrefs.putFloat(getString(R.string.lng_location), lng);
-                            editPrefs.commit();
+                    SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editPrefs = prefs.edit();
+                    editPrefs.putFloat(getString(R.string.lat_location), lat);
+                    editPrefs.putFloat(getString(R.string.lng_location), lng);
+                    editPrefs.commit();
 
-                            initfragment();
+                    initfragment();
 
-                        } else {
-                            //enter manually
-                            Log.d("LOCATION TAG DASHBOARD", "  NULL LOCATION ");
-                        }
-                    }
-
-                    @Override
-                    public void onStatusChanged(String s, int i, Bundle bundle) {
-
-                    }
-
-                    @Override
-                    public void onProviderEnabled(String s) {
-
-                    }
-
-                    @Override
-                    public void onProviderDisabled(String s) {
-
-                    }
-                };
-
-                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_UPDATE_INTERVAL, LOCATION_UPDATE_INTERVAL, mLocationListener);
-            } else {
-                Log.d("CREATING LOCATION REQ", "  " + "creating location request");
-                createLocationRequest();
+                } else {
+                    //enter manually
+                    Log.d("LOCATION TAG DASHBOARD", "  NULL LOCATION ");
+                }
             }
-        }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+
+            }
+        };
+
+        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_UPDATE_INTERVAL, LOCATION_UPDATE_INTERVAL, mLocationListener);
     }
 
+
+
      private void requestLocationPermission() {
-
          ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, MY_REQUEST_LOCATION_PERMISSION);
-
-
-        /* if (checkPermissionLocation == PackageManager.PERMISSION_GRANTED) {
-
-             // check if location is on
-            if(isLocationOn()) {
-
-                LocationListener mLocationListener = new LocationListener() {
-                    @Override
-                    public void onLocationChanged(Location location) {
-                        if (location != null) {
-
-                            float lat = (float) location.getLatitude();
-                            float lng = (float) location.getLongitude();
-
-                            Log.d("LOCATION TAG DASHBOARD", " Latitude" + "   " + lat);
-                            Log.d("LOCATION TAG DASHBOARD", " Longitude" + "   " + lng);
-
-
-                            SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editPrefs = prefs.edit();
-                            editPrefs.putFloat(getString(R.string.lat_location), lat);
-                            editPrefs.putFloat(getString(R.string.lng_location), lng);
-                            editPrefs.commit();
-                        } else {
-                            Log.d("LOCATION TAG DASHBOARD", "  NULL LOCATION ");
-                        }
-                    }
-
-                    @Override
-                    public void onStatusChanged(String s, int i, Bundle bundle) {
-
-                    }
-
-                    @Override
-                    public void onProviderEnabled(String s) {
-
-                    }
-
-                    @Override
-                    public void onProviderDisabled(String s) {
-
-                    }
-                };
-
-                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_UPDATE_INTERVAL, LOCATION_UPDATE_INTERVAL, mLocationListener);
-            } else {
-                //turn on location
-
-            }
-
-
-         } else {
-         }*/
-
      }
 
-   protected void createLocationRequest(){
+   protected void resolveLocationSettings(){
        /**
         * To create a request to get location settings first we must create an object defining the type of location we want ( Accuracy, update interval ).
         * Then we must pass tha to location settings request builder object. Finally we check if that location setting exist with SettingsClient and Task<?>
         *
         *
         */
-
         LocationRequest mLocationRequest = new LocationRequest();
         mLocationRequest.setFastestInterval(LocationUtil.FASTEST_UPDATE_INTERLVAL);
         mLocationRequest.setInterval(LocationUtil.LOCATION_UPDATE_INTERVAL);
@@ -310,7 +237,18 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
 
         SettingsClient client = LocationServices.getSettingsClient(this);
         Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
-        task.addOnFailureListener(this,new OnFailureListener() {
+        task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
+            @Override
+            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+               LocationSettingsStates locState = locationSettingsResponse.getLocationSettingsStates();
+                if(locState.isLocationPresent() && locState.isLocationUsable()){
+                    updateLocation();
+                }
+            }
+        });
+
+
+         task.addOnFailureListener(this,new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 if(e instanceof ResolvableApiException){
@@ -321,6 +259,7 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
 
                     } catch (IntentSender.SendIntentException e2){
                         e.printStackTrace();
+                        Log.d("ERROR", "  " + e2.getMessage());
                     }
                 }
             }
@@ -335,8 +274,7 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
             case MY_REQUEST_LOCATION_PERMISSION:
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     Log.d("REQUEST PERMISSON", "    " + "permission granted");
-                        requestLocationUpdates();
-
+                        updateLocation();
                 } else {
                     Toast.makeText(DashboardActivity.this,R.string.location_permission_denied,Toast.LENGTH_LONG).show();
                     //offer to enter manually
@@ -460,13 +398,13 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
                 case REQUEST_CHECK_SETTINGS:
                     LocationSettingsStates locState = LocationSettingsStates.fromIntent(data);
                     if(locState.isLocationPresent() && locState.isLocationUsable()){
-                        initfragment();
+                        updateLocation();
+                    } else {
+                        // handle
+
                     }
                     break;
             }
-
-
-
 
 
         } else if (resultCode == Activity.RESULT_CANCELED){
@@ -480,6 +418,8 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
         }
 
     }
+
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener listener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
