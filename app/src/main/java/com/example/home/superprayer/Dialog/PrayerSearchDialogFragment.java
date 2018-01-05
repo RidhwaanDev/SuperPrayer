@@ -116,6 +116,8 @@ public class PrayerSearchDialogFragment extends DialogFragment implements NetWor
     @Override
     public void onStart() {
         super.onStart();
-        ((AlertDialog) getDialog()).getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(R.color.colorPrimaryDark);
+        ((android.support.v7.app.AlertDialog) getDialog()).getButton(android.support.v7.app.AlertDialog.BUTTON_POSITIVE).setTextColor(R.color.colorDuhr);
+        ((android.support.v7.app.AlertDialog) getDialog()).getButton(android.support.v7.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(R.color.colorMaghrib);
+
     }
 }

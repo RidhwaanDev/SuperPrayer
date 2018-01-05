@@ -40,6 +40,8 @@ dependencies {
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.mikhaellopez:circularprogressbar:1.1.1'
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
+    compile 'com.airbnb.android:lottie:2.5.0-beta1'
+
 
 
 

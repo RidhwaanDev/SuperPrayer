@@ -46,6 +46,13 @@
 
     <string name="zero_missed_default">0 missed</string>
 
+    <string name="dialog_location_request_text">Location needed to get prayer times!</string>
+    <string name="dialog_location_manual_option">Enter location manually.</string>
+    <string name="dialog_location_reject_option"> Deny permission/location.</string>
+
+
+
+
 
 
 

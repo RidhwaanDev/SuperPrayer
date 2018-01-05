@@ -17,6 +17,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -30,6 +31,7 @@ import android.view.MenuItem;
 import android.widget.DatePicker;
 import android.widget.Toast;
 
+import com.example.home.superprayer.Dialog.LocationRequestDialog;
 import com.example.home.superprayer.Dialog.PrayerDateDialogFragment;
 import com.example.home.superprayer.Fragment.CompassFragment;
 import com.example.home.superprayer.Fragment.LogFragment;
@@ -64,9 +66,12 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
 
 
     //constant key/code vars
-    private static final int REQUEST_PLACE_AUTO_COMPLETE = 1000;
+
     private static final String CODE_SHOW_PRAYER_DIALOG = "SHOW PRAYER DIALOG PLEASE";
     private static final String CODE_SHOW_PRAYER_DATE_PICKER_DIALOG = "SHOW PRAYER DATE PICKER DIALOG PLEASE";
+    private static final String CODE_SHOW_LOCATION_REQUEST_DIALOG = "SHOW LOCATION REQUEST DIALOG PLEASE";
+
+    private static final int REQUEST_PLACE_AUTO_COMPLETE = 1000;
     private static final int MY_REQUEST_LOCATION_PERMISSION =1002;
     private static final int REQUEST_CHECK_SETTINGS = 1032;
     private static int CURRENT_FRAG = 0;
@@ -330,9 +335,12 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
                     Log.d("REQUEST PERMISSON", "    " + "permission granted");
                        // updateLocation();
                         updateWithLastKnownLocation();
+                        break;
                 } else {
                     Toast.makeText(DashboardActivity.this,R.string.location_permission_denied,Toast.LENGTH_LONG).show();
-                    //offer to enter manually
+                    LocationRequestDialog requestDialog = LocationRequestDialog.newInstance();
+                    requestDialog.show(getSupportFragmentManager(),CODE_SHOW_LOCATION_REQUEST_DIALOG);
+
                 }
                 break;
         }
