@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.home.superprayer.Model.NextPrayerEnum;
+import com.example.home.superprayer.Model.PrayerDataBaseModel;
 import com.example.home.superprayer.Model.PrayerModel;
 import com.example.home.superprayer.Model.PrayerNextModel;
 import com.example.home.superprayer.Network.BackgroundNetwork;
@@ -59,6 +60,9 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
     public static final String SHARED_PREFS_SERVICE_DATE = "shared_prefs_for_service_data";
     public static final String KEY_NEXT_TIME_SERVICE = "next_time_for_service";
     public static final String KEY_NEXT_PRAYER_SERVICE = "next_time_for_service";
+
+
+
 
 
     private static final int MY_NOTIFCATION_ID = 0;

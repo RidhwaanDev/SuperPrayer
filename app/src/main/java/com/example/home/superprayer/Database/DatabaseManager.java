@@ -20,7 +20,7 @@ public class DatabaseManager {
     private static DatabaseManager sDataBaseManager;
 
     private SQLiteDatabase mDataBase;
-    public  PrayerDataBaseModel fajr,duhr,asr,maghrib,isha;
+    public PrayerDataBaseModel fajr,duhr,asr,maghrib,isha;
 
 
     public static DatabaseManager getInstance(Context c){
@@ -33,10 +33,11 @@ public class DatabaseManager {
 
     private DatabaseManager (Context c){
         mDataBase = new DataBaseHelper(c).getWritableDatabase();
-        init();
+       // init();
     }
 
-    private  void init(){
+    public void init(){
+
         fajr = new PrayerDataBaseModel();
         duhr = new PrayerDataBaseModel();
         asr = new PrayerDataBaseModel();
@@ -72,7 +73,7 @@ public class DatabaseManager {
         mDataBase.update(DataBaseSchema.PrayerTable.NAME,values,DataBaseSchema.PrayerTable.Cols.UUID + " = ? ", new String[]{uuID});
     }
 
-    private  void addPrayer(PrayerDataBaseModel model){
+    public void addPrayer(PrayerDataBaseModel model){
         ContentValues values = getContentValues(model);
         mDataBase.insert(DataBaseSchema.PrayerTable.NAME,null,values);
     }
@@ -90,7 +91,7 @@ public class DatabaseManager {
         Cursor cursor = mDataBase.query(DataBaseSchema.PrayerTable.NAME,null,whichColumn,whichRow,null,null,null);
         return new DataCursor(cursor);
     }
-    public void clearData(){
+    private void clearData(){
 
         String args[] = new String[]{fajr.getmID().toString()};
         mDataBase.delete(DataBaseSchema.PrayerTable.NAME,DataBaseSchema.PrayerTable.Cols.UUID + "=?", args);

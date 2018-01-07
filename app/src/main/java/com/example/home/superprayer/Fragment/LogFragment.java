@@ -1,10 +1,9 @@
 package com.example.home.superprayer.Fragment;
 
-import android.app.AlertDialog;
-import android.app.FragmentManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.icu.lang.UProperty;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -35,7 +34,6 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,26 +45,57 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
 
 
     private DatabaseManager dbManager;
+    private static ArrayList<PrayerDataBaseModel> mPrayerList;
 
     private RelativeLayout mFajrCount,mDuhrCount,mAsrCount,mMaghribCount,mIshaCount;
     private TextView mFajrMissedText,mDuhrMissedText,mAsrMissedText,mMaghribMissedText,mIshaMissedText;
+
+
     private static final String CLEAR_DATA_KEY = "clear_data_base_key_unique_100";
 
-
-
-    private ArrayList<PrayerDataBaseModel> mPrayerList;
     private BarChart mBarChart;
     private BarDataSet barSet;
 
     private List<BarEntry> mEntries;
 
+    public PrayerDataBaseModel fajr,duhr,asr,maghrib,isha;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+
+        dbManager = DatabaseManager.getInstance(getActivity());
+        mPrayerList = dbManager.getDBPrayers();
+
+        boolean isFirstLaunch = prefs.getBoolean(getString(R.string.is_first_key), true);
+        Log.d("db init test", "   " + isFirstLaunch);
+        //  dbInit();
+            if(isFirstLaunch){
+                SharedPreferences.Editor edit = prefs.edit();
+                edit.putBoolean(getString(R.string.is_first_key),false);
+                edit.commit();
+                dbInit();
+                Log.d("db init test", "   " + fajr.mID.toString());
+
+            }
+
+    }
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_log_layout,container,false);
-        dbManager = DatabaseManager.getInstance(getActivity());
+        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
 
-       // showTip(container);
+
+
+          boolean shouldShow = prefs.getBoolean(getString(R.string.prefs_should_show_tip_again), true);
+                  if(shouldShow){
+
+              showTip(container);
+
+             }
 
         mPrayerList = dbManager.getDBPrayers();
         mBarChart = v.findViewById(R.id.bar_char_prayer);
@@ -76,7 +105,6 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
         mAsrMissedText = v.findViewById(R.id.tv_prayer_missed_count3);
         mMaghribMissedText = v.findViewById(R.id.tv_prayer_missed_count4);
         mIshaMissedText = v.findViewById(R.id.tv_prayer_missed_count5);
-
 
         mFajrCount = v.findViewById(R.id.fajr_missed_view);
         mDuhrCount = v.findViewById(R.id.duhr_missed_view);
@@ -97,7 +125,6 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
         mBarChart.setScaleEnabled(false);
         mBarChart.setPinchZoom(false);
         mBarChart.setDoubleTapToZoomEnabled(false);
-
 
         XAxis x_axis = mBarChart.getXAxis();
         x_axis.setDrawAxisLine(false);
@@ -164,7 +191,6 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
 
         setHasOptionsMenu(true);
 
-
      //   mEntries.add(new BarEntry(GraphUtility.FAJR_POS,dbManager.fajr.getmCount()));
    //     mEntries.add(new BarEntry(GraphUtility.DUHR_POS,dbManager.duhr.getmCount()));
     //    mEntries.add(new BarEntry(GraphUtility.ASR_POS,dbManager.asr.getmCount()));
@@ -208,56 +234,124 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
             }
         });
 
+
+
         return v;
     }
 
+
+    private void dbInit(){
+
+        fajr = new PrayerDataBaseModel();
+        duhr = new PrayerDataBaseModel();
+        asr = new PrayerDataBaseModel();
+        maghrib = new PrayerDataBaseModel();
+        isha = new PrayerDataBaseModel();
+
+        fajr.setmCount(0);
+        fajr.setmName("Fajr");
+
+        duhr.setmCount(0);
+        duhr.setmName("Duhr");
+
+        asr.setmCount(0);
+        asr.setmName("Asr");
+
+        maghrib.setmCount(0);
+        maghrib.setmName("Maghrib");
+
+        isha.setmCount(0);
+        isha.setmName("Isha");
+
+        dbManager.addPrayer(fajr);
+        dbManager.addPrayer(duhr);
+        dbManager.addPrayer(asr);
+        dbManager.addPrayer(maghrib);
+        dbManager.addPrayer(isha);
+
+    }
+
+
     private void update(){
-        ArrayList<PrayerDataBaseModel> list = dbManager.getDBPrayers();
+      //  ArrayList<PrayerDataBaseModel> list = dbManager.getDBPrayers();
+
         mEntries.clear();
-        for(PrayerDataBaseModel model: list){
-            if(model.getmID().equals(dbManager.fajr.getmID())){
+
+        for(PrayerDataBaseModel model: mPrayerList){
+            if(model.getmName().equals("Fajr")){
+                Log.d("DATABASE TEST", "  " + model.getmCount());
                 mEntries.add(new BarEntry(GraphUtility.FAJR_POS,model.getmCount()));
                 mFajrMissedText.setText(model.getmCount() + " " +"missed");
 
             }
-            if(model.getmID().equals(dbManager.duhr.getmID())){
+            if(model.getmName().equals("Duhr")){
                 mEntries.add(new BarEntry(GraphUtility.DUHR_POS,model.getmCount()));
                 mDuhrMissedText.setText(model.getmCount() + " " +"missed");
 
             }
 
-            if(model.getmID().equals(dbManager.asr.getmID())){
+            if(model.getmName().equals("Asr")){
                 mEntries.add(new BarEntry(GraphUtility.ASR_POS,model.getmCount()));
                 mAsrMissedText.setText(model.getmCount() + " " +"missed");
 
-
             }
 
-            if(model.getmID().equals(dbManager.maghrib.getmID())){
+            if(model.getmName().equals("Maghrib")){
                 mEntries.add(new BarEntry(GraphUtility.MAGHRIB_POS,model.getmCount()));
                 mMaghribMissedText.setText(model.getmCount() + " " +"missed");
 
 
             }
-            if(model.getmID().equals(dbManager.isha.getmID())){
+            if(model.getmName().equals("Isha")){
                 mEntries.add(new BarEntry(GraphUtility.ISHA_POS,model.getmCount()));
                 mIshaMissedText.setText(model.getmCount() + " " +"missed");
 
+            }
+
+       /*for(PrayerDataBaseModel model: mPrayerList){
+            if(model.getmID().equals(fajr.getmID())){
+                Log.d("DATABASE TEST", "  " + model.getmCount());
+                mEntries.add(new BarEntry(GraphUtility.FAJR_POS,model.getmCount()));
+                mFajrMissedText.setText(model.getmCount() + " " +"missed");
 
             }
+            if(model.getmID().equals(duhr.getmID())){
+                mEntries.add(new BarEntry(GraphUtility.DUHR_POS,model.getmCount()));
+                mDuhrMissedText.setText(model.getmCount() + " " +"missed");
+
+            }
+
+            if(model.getmID().equals(asr.getmID())){
+                mEntries.add(new BarEntry(GraphUtility.ASR_POS,model.getmCount()));
+                mAsrMissedText.setText(model.getmCount() + " " +"missed");
+
+            }
+
+            if(model.getmID().equals(maghrib.getmID())){
+                mEntries.add(new BarEntry(GraphUtility.MAGHRIB_POS,model.getmCount()));
+                mMaghribMissedText.setText(model.getmCount() + " " +"missed");
+
+
+            }
+            if(model.getmID().equals(isha.getmID())){
+                mEntries.add(new BarEntry(GraphUtility.ISHA_POS,model.getmCount()));
+                mIshaMissedText.setText(model.getmCount() + " " +"missed");
+
+            }*/
             mBarChart.notifyDataSetChanged();
             mBarChart.invalidate();
         }
     }
 
+
     @Override
     public void onClick(View view) {
-            ArrayList<PrayerDataBaseModel> list = dbManager.getDBPrayers();
+         //   ArrayList<PrayerDataBaseModel> mPrayerList = dbManager.getDBPrayers();
         int id = view.getId();
         switch (id) {
             case R.id.fajr_missed_view:
-                for (PrayerDataBaseModel model: list) {
-                    if(model.getmID().equals(dbManager.fajr.getmID())){
+                for (PrayerDataBaseModel model: mPrayerList) {
+                    if(model.getmName().equals("Fajr")){
                         Log.d("ENTRY TAG", " ENTERED");
                         model.setmCount(model.getmCount() + 1);
                         dbManager.updatePrayer(model);
@@ -266,8 +360,8 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
                 }
                 break;
             case R.id.duhr_missed_view:
-                for (PrayerDataBaseModel model: list) {
-                    if(model.getmID().equals(dbManager.duhr.getmID())){
+                for (PrayerDataBaseModel model: mPrayerList) {
+                    if(model.getmName().equals("Duhr")){
                         Log.d("ENTRY TAG", " ENTERED");
                         model.setmCount(model.getmCount() + 1);
                         dbManager.updatePrayer(model);
@@ -276,8 +370,8 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
                 }
                 break;
             case R.id.asr_view:
-                for (PrayerDataBaseModel model: list) {
-                    if(model.getmID().equals(dbManager.asr.getmID())){
+                for (PrayerDataBaseModel model: mPrayerList) {
+                    if(model.getmName().equals("Asr")){
                         Log.d("ENTRY TAG", " ENTERED");
                         model.setmCount(model.getmCount() + 1);
                         dbManager.updatePrayer(model);
@@ -286,8 +380,8 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
                 }
                 break;
             case R.id.maghrib_view:
-                for (PrayerDataBaseModel model: list) {
-                    if(model.getmID().equals(dbManager.maghrib.getmID())){
+                for (PrayerDataBaseModel model: mPrayerList) {
+                    if(model.getmName().equals("Maghrib")){
                         Log.d("ENTRY TAG", " ENTERED");
                         model.setmCount(model.getmCount() + 1);
                         dbManager.updatePrayer(model);
@@ -296,8 +390,8 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
                 }
                 break;
             case R.id.isha_view:
-                for (PrayerDataBaseModel model: list) {
-                    if(model.getmID().equals(dbManager.isha.getmID())){
+                for (PrayerDataBaseModel model: mPrayerList) {
+                    if(model.getmName().equals("Isha")){
                         Log.d("ENTRY TAG", " ENTERED");
                         model.setmCount(model.getmCount() + 1);
                         dbManager.updatePrayer(model);
@@ -307,7 +401,61 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
                 break;
 
 
-                default:
+            default:
+     /*   switch (id) {
+            case R.id.fajr_missed_view:
+                for (PrayerDataBaseModel model: mPrayerList) {
+                    if(model.getmName() == "Fajr"){
+                        Log.d("ENTRY TAG", " ENTERED");
+                        model.setmCount(model.getmCount() + 1);
+                        dbManager.updatePrayer(model);
+                        update();
+                    }
+                }
+                break;
+            case R.id.duhr_missed_view:
+                for (PrayerDataBaseModel model: mPrayerList) {
+                    if(model.getmID().equals(duhr.getmID())){
+                        Log.d("ENTRY TAG", " ENTERED");
+                        model.setmCount(model.getmCount() + 1);
+                        dbManager.updatePrayer(model);
+                        update();
+                    }
+                }
+                break;
+            case R.id.asr_view:
+                for (PrayerDataBaseModel model: mPrayerList) {
+                    if(model.getmID().equals(asr.getmID())){
+                        Log.d("ENTRY TAG", " ENTERED");
+                        model.setmCount(model.getmCount() + 1);
+                        dbManager.updatePrayer(model);
+                        update();
+                    }
+                }
+                break;
+            case R.id.maghrib_view:
+                for (PrayerDataBaseModel model: mPrayerList) {
+                    if(model.getmID().equals(maghrib.getmID())){
+                        Log.d("ENTRY TAG", " ENTERED");
+                        model.setmCount(model.getmCount() + 1);
+                        dbManager.updatePrayer(model);
+                        update();
+                    }
+                }
+                break;
+            case R.id.isha_view:
+                for (PrayerDataBaseModel model: mPrayerList) {
+                    if(model.getmID().equals(isha.getmID())){
+                        Log.d("ENTRY TAG", " ENTERED");
+                        model.setmCount(model.getmCount() + 1);
+                        dbManager.updatePrayer(model);
+                        update();
+                    }
+                }
+                break;
+
+
+                default:*/
                     //do nothing
         }
     }
@@ -322,7 +470,7 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        final ArrayList<PrayerDataBaseModel> testList = dbManager.getDBPrayers();
+       // final ArrayList<PrayerDataBaseModel> mPrayerList = dbManager.getDBPrayers();
 
         int id = item.getItemId();
         switch (id){
@@ -334,7 +482,7 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
                 DataBaseClearDialog dataBaseClearDialog = new DataBaseClearDialog();
              //   dataBaseClearDialog.show(fg,CLEAR_DATA_KEY);
 
-                for (PrayerDataBaseModel model : testList) {
+                for (PrayerDataBaseModel model : mPrayerList) {
                     model.setmCount(0);
                     dbManager.updatePrayer(model);
                 }
@@ -352,7 +500,7 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
     private void showTip(View v){
 
         SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
-        boolean shouldShow = prefs.getBoolean(getString(R.string.prefs_never_show_again),true);
+        boolean shouldShow = prefs.getBoolean(getString(R.string.prefs_should_show_tip_again),true);
         if(shouldShow){
             Snackbar myTipBar = Snackbar.make(v,R.string.log_tip,Snackbar.LENGTH_INDEFINITE);
             myTipBar.setAction(R.string.never_show_again, new MyShowAgainListener());
@@ -365,8 +513,13 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
         public void onClick(View view) {
             SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
             SharedPreferences.Editor edit = preferences.edit();
-            edit.putBoolean(getString(R.string.prefs_never_show_again),false);
+            edit.putBoolean(getString(R.string.prefs_should_show_tip_again),false);
+            edit.apply();
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 }

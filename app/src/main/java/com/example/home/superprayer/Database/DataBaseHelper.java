@@ -18,6 +18,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         super(c,DATABASE_NAME,null,VERSION);
     }
 
+
+
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(" create table " +DataBaseSchema.PrayerTable.NAME + "(" +

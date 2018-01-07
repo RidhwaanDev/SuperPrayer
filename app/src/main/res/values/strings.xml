@@ -11,6 +11,8 @@
     <string name="location_permission_denied">Location permission denied. Can not get prayer times.</string>
     <string name="lat_location">latitude_location_key_prefs_editor</string>
     <string name="lng_location">longitude_location_key_prefs_editor</string>
+    <string name="is_first_key">shared_prefs_is_first_log_frag_key_101230401</string>
+
 
     <string name="string_fajr">Fajr</string>
     <string name="string_duhr">Duhr</string>
@@ -44,9 +46,9 @@
     <string name="no_data_text">No prayers missed</string>
 
 
-    <string name="log_tip">Click on the label to add</string>
+    <string name="log_tip">Click on the blue label to add</string>
     <string name="never_show_again">Never show again</string>
-    <string name="prefs_never_show_again">never_show_again_perfs_entry_1000</string>
+    <string name="prefs_should_show_tip_again">never_show_again_perfs_entry_1000</string>
     <string name="confirm_delete">Are you sure you want to delete your log? </string>
 
 
