@@ -18,7 +18,7 @@ public class GraphUtility {
 
     public static final float GRANULARITY = 5f;
     public static final float Y_AXIS_TEXT_SIZE = 12f;
-    public static final float MAX = 50f;
+    public static final float MAX = 25f;
     public static final float MIN = 0f;
     public static final int ANIM_DURATION = 750;
 

@@ -146,35 +146,63 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
             case FAJR:
                 mFajrText.setTypeface(mFajrText.getTypeface(), Typeface.BOLD);
+                mDuhrText.setTypeface(mDuhrText.getTypeface(), Typeface.NORMAL);
+                mAsrText.setTypeface(mAsrText.getTypeface(), Typeface.NORMAL);
+                mMaghrebText.setTypeface(mMaghrebText.getTypeface(), Typeface.NORMAL);
+                mIshaText.setTypeface(mIshaText.getTypeface(), Typeface.NORMAL);
+
                 handleNextPrayer(nextPrayerModel,"Fajr");
                 Log.d("PRAYER", "FAJR");
                 break;
             case DUHR:
+                mFajrText.setTypeface(mFajrText.getTypeface(), Typeface.NORMAL);
                 mDuhrText.setTypeface(mDuhrText.getTypeface(), Typeface.BOLD);
+                mAsrText.setTypeface(mAsrText.getTypeface(), Typeface.NORMAL);
+                mMaghrebText.setTypeface(mMaghrebText.getTypeface(), Typeface.NORMAL);
+                mIshaText.setTypeface(mIshaText.getTypeface(), Typeface.NORMAL);
+
                 handleNextPrayer(nextPrayerModel,"Duhr");
 
                 Log.d("PRAYER", "DUHR");
                 break;
             case ASR:
-                mAsrText.setTypeface(mAsrText.getTypeface(),Typeface.BOLD);
+                mFajrText.setTypeface(mFajrText.getTypeface(), Typeface.NORMAL);
+                mDuhrText.setTypeface(mDuhrText.getTypeface(), Typeface.NORMAL);
+                mAsrText.setTypeface(mAsrText.getTypeface(), Typeface.BOLD);
+                mMaghrebText.setTypeface(mMaghrebText.getTypeface(), Typeface.NORMAL);
+                mIshaText.setTypeface(mIshaText.getTypeface(), Typeface.NORMAL);
+
                 handleNextPrayer(nextPrayerModel,"Asr");
 
                 Log.d("PRAYER", "ASR");
                 break;
             case MAGHRIB:
-                mMaghrebText.setTypeface(mMaghrebText.getTypeface(),Typeface.BOLD);
+
+                mFajrText.setTypeface(mFajrText.getTypeface(), Typeface.NORMAL);
+                mDuhrText.setTypeface(mDuhrText.getTypeface(), Typeface.NORMAL);
+                mAsrText.setTypeface(mAsrText.getTypeface(), Typeface.NORMAL);
+                mMaghrebText.setTypeface(mMaghrebText.getTypeface(), Typeface.BOLD);
+                mIshaText.setTypeface(mIshaText.getTypeface(), Typeface.NORMAL);
+
                 handleNextPrayer(nextPrayerModel,"Maghrib");
 
                 Log.d("PRAYER", "MAGHRIB");
                 break;
             case ISHA:
-                mIshaText.setTypeface(mIshaText.getTypeface(),Typeface.BOLD);
+
+                mFajrText.setTypeface(mFajrText.getTypeface(), Typeface.NORMAL);
+                mDuhrText.setTypeface(mDuhrText.getTypeface(), Typeface.NORMAL);
+                mAsrText.setTypeface(mAsrText.getTypeface(), Typeface.NORMAL);
+                mMaghrebText.setTypeface(mMaghrebText.getTypeface(), Typeface.NORMAL);
+                mIshaText.setTypeface(mIshaText.getTypeface(), Typeface.BOLD);
+
                 handleNextPrayer(nextPrayerModel,"Isha");
 
                 Log.d("PRAYER", "ISHA");
                 break;
             case END:
                 mFajrText.setTypeface(mFajrText.getTypeface(), Typeface.BOLD);
+                mIshaText.setTypeface(mIshaText.getTypeface(), Typeface.NORMAL);
                 handleNextPrayer(nextPrayerModel,null);
 
                 Log.d("PRAYER", "END");
@@ -483,6 +511,7 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         updateTimes();
 
     }
+
 
     @Override
     public void onPause() {

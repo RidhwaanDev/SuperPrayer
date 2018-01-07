@@ -238,6 +238,11 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
 
         return v;
     }
+    
+    private float calculateMax(){
+        // TODO: 1/6/2018 dynamically calculate graph max. 
+                return 0;
+    }
 
 
     private void dbInit(){
