@@ -11,6 +11,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.home.superprayer.Interface.NetWorkResponse;
+import com.example.home.superprayer.Model.ManualLocationModel;
 import com.example.home.superprayer.Model.PrayerModel;
 
 import org.json.JSONException;
@@ -32,6 +33,7 @@ public class NetworkRequest {
     private RequestQueue mQueue;
     private NetworkQueue mNetworkQueue;
     public NetWorkResponse mResponse = null;
+    private static final String ADDRESS_OBJ_KEY = "ADDRESS_OBJ_KEY_1_KEY";
 
     public NetworkRequest(Context context) {
         mQueue = Volley.newRequestQueue(context);
@@ -69,10 +71,8 @@ public class NetworkRequest {
                         model.setSunset(sunset);
 
                         mResponse.onDownloadedData(model);
-
-
+                        
                         mNetworkQueue.setPrayerInstance(model);
-
 
 
 
@@ -95,6 +95,50 @@ public class NetworkRequest {
         mNetworkQueue.addJSONRequest(mJsonRequest);
         return null;
 
+    }
+
+    public JSONObject requestLatLngFromLocation(String url, String address){
+            int requestMethod = Request.Method.GET;
+            JSONObject param = new JSONObject();
+            try{
+                param.put(ADDRESS_OBJ_KEY,address);
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+
+           JsonObjectRequest mJsonRequest = new JsonObjectRequest(requestMethod, url, param, new Response.Listener<JSONObject>() {
+               @Override
+               public void onResponse(JSONObject response) {
+                   if(response != null){
+                       try{
+
+                           double lat,lng;
+                           JSONObject object = response.getJSONObject("data");
+                           lat = object.getDouble("latitude");
+                           lng = object.getDouble("longitude");
+
+                           ManualLocationModel m = new ManualLocationModel();
+                           m.setLatitude(lat);
+                           m.setLongitude(lng);
+
+                           mResponse.onDownloadedAddress(m);
+
+                       }catch (JSONException e){
+                           e.printStackTrace();
+                       }
+                   } else {
+                       Log.d("Get location address", "   " +"  response was null lmao");
+                   }
+               }
+           },new Response.ErrorListener() {
+               @Override
+               public void onErrorResponse(VolleyError error) {
+                   error.printStackTrace();
+               }
+
+           });
+            mNetworkQueue.addJSONRequest(mJsonRequest);
+            return null;
     }
 
 
@@ -121,7 +165,6 @@ public class NetworkRequest {
             Long tsLong = System.currentTimeMillis()/1000;
             ts = tsLong.toString();
         }
-
 
         Uri.Builder builder = new Uri.Builder();
         builder.scheme("http")
