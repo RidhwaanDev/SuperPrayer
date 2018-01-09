@@ -10,6 +10,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.home.superprayer.Interface.ManualLocationResponse;
 import com.example.home.superprayer.Interface.NetWorkResponse;
 import com.example.home.superprayer.Model.ManualLocationModel;
 import com.example.home.superprayer.Model.PrayerModel;
@@ -33,6 +34,7 @@ public class NetworkRequest {
     private RequestQueue mQueue;
     private NetworkQueue mNetworkQueue;
     public NetWorkResponse mResponse = null;
+    public ManualLocationResponse mLocationResponse = null;
     private static final String ADDRESS_OBJ_KEY = "ADDRESS_OBJ_KEY_1_KEY";
 
     public NetworkRequest(Context context) {
@@ -71,7 +73,7 @@ public class NetworkRequest {
                         model.setSunset(sunset);
 
                         mResponse.onDownloadedData(model);
-                        
+
                         mNetworkQueue.setPrayerInstance(model);
 
 
@@ -121,7 +123,7 @@ public class NetworkRequest {
                            m.setLatitude(lat);
                            m.setLongitude(lng);
 
-                           mResponse.onDownloadedAddress(m);
+                           mLocationResponse.onDownloadedAddress(m);
 
                        }catch (JSONException e){
                            e.printStackTrace();

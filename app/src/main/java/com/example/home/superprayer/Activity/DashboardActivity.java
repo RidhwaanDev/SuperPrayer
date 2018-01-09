@@ -14,6 +14,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.wifi.WifiConfiguration;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -92,6 +93,15 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
     private DrawerLayout mDrawerNav;
     private ActionBarDrawerToggle mToggle;
     private Toolbar mToolBar;
+    private RelativeLayout warningLayout;
+     private  TextView retyTextView;
+
+    private static final int NETWORK_ERROR = 1;
+    private static final int LOCATION_ERROR = 2;
+    private static final int PERMISSION_ERROR = 3;
+
+    private boolean errorExists = false;
+
 
 
     @Override
@@ -102,10 +112,14 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
              mToolBar = findViewById(R.id.nav_toolbar);
              setSupportActionBar(mToolBar);
 
+
              mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
              mFusedLocation = LocationServices.getFusedLocationProviderClient(this);
 
 
+        mBottomNav = findViewById(R.id.bottom_navigation);
+        mBottomNav.setOnNavigationItemSelectedListener(listener);
+        mBottomNav.setVisibility(View.INVISIBLE);
 
              if(!isLocationPermissionExist()){
                  requestLocationPermission();
@@ -118,8 +132,7 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
              }
 
 
-            mBottomNav = findViewById(R.id.bottom_navigation);
-            mBottomNav.setOnNavigationItemSelectedListener(listener);
+
 
             mDrawerNav = findViewById(R.id.drawer_layout_id);
             mToggle = new ActionBarDrawerToggle(this,mDrawerNav,R.string.open,R.string.close);
@@ -145,28 +158,65 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
          *
          */
         if(NetworkQueue.isConnected(this) || isPrayerCached()){
+            errorExists = false;
+
+            if(warningLayout != null){
+                warningLayout.setVisibility(View.GONE);
+            }
+            mBottomNav.setVisibility(View.VISIBLE);
             transaction.commit();
+
         } else {
-            showNoNetworkError();
+            showError(NETWORK_ERROR);
         }
 
 
          //   transaction.commit();
 
     }
-    private void showNoNetworkError(){
+    private void showError(int errortype){
 
-        RelativeLayout warningLayout = findViewById(R.id.rl_warning_root_container);
+        errorExists = true;
+
+         warningLayout = findViewById(R.id.rl_warning_root_container);
+        retyTextView = findViewById(R.id.tv_retry_wifi);
+
+        switch (errortype){
+            case NETWORK_ERROR:
+                retyTextView.setText(R.string.tv_retry_network);
+                retyTextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(!NetworkQueue.isConnected(DashboardActivity.this)){
+                            Toast.makeText(DashboardActivity.this,"No network found. Pease turn on Wi-fi/Cellular data", Toast.LENGTH_SHORT).show();
+                        } else {
+                            initfragment();
+                        }
+                    }
+                });
+                break;
+            case LOCATION_ERROR:
+                retyTextView.setText(R.string.tv_retry_location);
+                retyTextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        resolveLocationSettings();
+                    }
+                });
+                break;
+            case PERMISSION_ERROR:
+                retyTextView.setText(R.string.tv_retry_permission);
+                retyTextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        requestLocationPermission();
+                    }
+                });
+                break;
+        }
+
         warningLayout.setVisibility(View.VISIBLE);
 
-        TextView retyTextView = findViewById(R.id.tv_retry_wifi);
-        retyTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d("RETRY WIFI TV", "  RETRYING  WIFI   ");
-                initfragment();
-            }
-        });
 
     }
 
@@ -226,6 +276,7 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
                 } else {
                     //enter manually
                     Log.d("LOCATION TAG DASHBOARD", "  NULL LOCATION ");
+                    showError(LOCATION_ERROR);
                 }
             }
 
@@ -261,9 +312,13 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
                     // updateLocation();
                     updateWithLastKnownLocation();
                 } else {
+/*
                     Toast.makeText(DashboardActivity.this,R.string.location_permission_denied,Toast.LENGTH_LONG).show();
                     LocationRequestDialog requestDialog = LocationRequestDialog.newInstance();
                     requestDialog.show(getSupportFragmentManager(),CODE_SHOW_LOCATION_REQUEST_DIALOG);
+*/
+                showError(PERMISSION_ERROR);
+
 
                 }
                 break;
@@ -338,7 +393,9 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
                mFusedLocation.getLastLocation().addOnFailureListener(this, new OnFailureListener() {
                    @Override
                    public void onFailure(@NonNull Exception e) {
+                       Log.d("updateWithLastKnownLoca", " failure gettomg ;ast lmpw ");
                        updateLocation();
+
                    }
                });
            } else {
@@ -478,8 +535,9 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
                     break;
 
                 case REQUEST_CHECK_SETTINGS:
-                    LocationRequestDialog dialog = LocationRequestDialog.newInstance();
-                    dialog.show(getSupportFragmentManager(),CODE_SHOW_LOCATION_REQUEST_DIALOG);
+                  /*  LocationRequestDialog dialog = LocationRequestDialog.newInstance();
+                    dialog.show(getSupportFragmentManager(),CODE_SHOW_LOCATION_REQUEST_DIALOG);*/
+                  showError(LOCATION_ERROR);
                     break;
             }
 
@@ -499,47 +557,46 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
 
             Fragment currentFragment;
 
+            switch (itemId) {
+                case R.id.action_prayer_times_frag:
 
-                switch (itemId) {
+                    currentFragment = new TimesFragment();
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    transaction.replace(R.id.fragment_layout_id, currentFragment, "Prayer Times");
+                    transaction.commit();
 
+                    CURRENT_FRAG = 1;
 
-                    case R.id.action_prayer_times_frag:
+                    Log.d("VIEW PAGER", " HELLO ITS PRAYER ");
+                    return true;
 
-                        currentFragment = new TimesFragment();
-                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                        transaction.replace(R.id.fragment_layout_id, currentFragment, "Prayer Times");
-                        transaction.commit();
+                case R.id.action_log_frag:
+                    currentFragment = new LogFragment();
+                    FragmentTransaction transaction2 = getSupportFragmentManager().beginTransaction();
+                    transaction2.replace(R.id.fragment_layout_id, currentFragment, "Prayer Log");
+                    transaction2.commit();
 
-                        CURRENT_FRAG = 1;
+                    CURRENT_FRAG = 2;
 
-                        Log.d("VIEW PAGER", " HELLO ITS PRAYER ");
-                        return true;
-
-                    case R.id.action_log_frag:
-                        currentFragment = new LogFragment();
-                        FragmentTransaction transaction2 = getSupportFragmentManager().beginTransaction();
-                        transaction2.replace(R.id.fragment_layout_id, currentFragment, "Prayer Log");
-                        transaction2.commit();
-
-                        CURRENT_FRAG = 2;
-
-                        Log.d("VIEW PAGER", " HELLO ITS LOG ");
-                        return true;
-                    case R.id.action_compass_frag:
-                        currentFragment = new CompassFragment();
-                        Log.d("VIEW PAGER", " HELLO ITS MOM ");
-                        FragmentTransaction transaction3 = getSupportFragmentManager().beginTransaction();
-                        transaction3.replace(R.id.fragment_layout_id, currentFragment, "Compass");
-                        transaction3.commit();
+                    Log.d("VIEW PAGER", " HELLO ITS LOG ");
+                    return true;
+                case R.id.action_compass_frag:
+                    currentFragment = new CompassFragment();
+                    Log.d("VIEW PAGER", " HELLO ITS MOM ");
+                    FragmentTransaction transaction3 = getSupportFragmentManager().beginTransaction();
+                    transaction3.replace(R.id.fragment_layout_id, currentFragment, "Compass");
+                    transaction3.commit();
 
 
-                        CURRENT_FRAG = 3;
+                    CURRENT_FRAG = 3;
 
-                        return true;
-                }
+                    return true;
+            }
+
 
          return false;
         }
+
 
 
     };

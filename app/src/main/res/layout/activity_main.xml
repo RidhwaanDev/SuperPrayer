@@ -68,7 +68,6 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:background="?android:attr/selectableItemBackground"
-                    android:text="@string/tv_retry"
 
                     />
             </LinearLayout>

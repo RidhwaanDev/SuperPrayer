@@ -27,6 +27,8 @@ public class LocationRequestDialog extends DialogFragment {
  //       View v = getActivity().getLayoutInflater().inflate(R.layout.dialog_location_prompt,null,false)
         View v = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_location_prompt,null);
 
+
+
         LottieAnimationView animationView =  v.findViewById(R.id.dialog_animation_view);
         animationView.loop(true);
         animationView.playAnimation();

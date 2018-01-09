@@ -10,5 +10,4 @@ import com.example.home.superprayer.Model.PrayerModel;
 public interface NetWorkResponse {
 
     void onDownloadedData(PrayerModel model);
-    void onDownloadedAddress(ManualLocationModel manualLocationModel)
 }

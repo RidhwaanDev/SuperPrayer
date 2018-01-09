@@ -40,6 +40,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         android:id="@+id/rl_enter_manually"
+        android:clickable="true"
+        android:background="?android:attr/selectableItemBackground"
 
         >
 
@@ -71,6 +73,8 @@
     <RelativeLayout
         android:layout_marginBottom="32dp"
         android:id="@+id/rl_reject"
+        android:clickable="true"
+        android:background="?android:attr/selectableItemBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
