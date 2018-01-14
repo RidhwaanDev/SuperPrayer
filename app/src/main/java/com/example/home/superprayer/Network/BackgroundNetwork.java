@@ -7,6 +7,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Typeface;
+import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
@@ -19,34 +21,41 @@ import com.example.home.superprayer.Interface.NetWorkResponse;
 import com.example.home.superprayer.Model.PrayerModel;
 import com.example.home.superprayer.Model.PrayerNextModel;
 import com.example.home.superprayer.R;
+import com.example.home.superprayer.Util.LazyLog;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static com.example.home.superprayer.Model.NextPrayerEnum.ASR;
+import static com.example.home.superprayer.Model.NextPrayerEnum.DUHR;
+import static com.example.home.superprayer.Model.NextPrayerEnum.END;
+import static com.example.home.superprayer.Model.NextPrayerEnum.FAJR;
+import static com.example.home.superprayer.Model.NextPrayerEnum.ISHA;
+import static com.example.home.superprayer.Model.NextPrayerEnum.MAGHRIB;
 
 /**
  * Created by Home on 12/10/2017.
  */
 
-public class BackgroundNetwork extends IntentService implements NetWorkResponse {
+public class BackgroundNetwork extends IntentService  {
 
-    private static int UPDATE_INTERVAL = (1000 * 60);
-    private static int TRUE_UPDATE = (1000 * 60) * 60; // every ten minutes
+    private static int ONE_MIN = (1000 * 60);
+    private static int ONE_HOUR = ONE_MIN * 60;
+    private static int TRUE_UPDATE = ONE_HOUR * 1; // every hour
 
-    public static final String KEY_PRAYER_MODEL_TO_NOTIFIY = "BACKGROUND_NETWORK_UPDATE_NOTF";
     private static final String MY_NOTIFICATION_CHANNEL_ID = "my_channel_id_0002";
 
     private static final String KEY_LAT = "KEY PREFS LAT";
     private static final String KEY_LNG = "KEY PREFS LANG";
-
-
+    private static final String KEY_PRAYER_STRING ="KEY PRAYER MODEL";
+    private static final String KEY_PRAYER_TIME="KEY_PRAYER_TIME";
 
     private static final String TAG = "PollService";
 
 
-    private PrayerNextModel mServiceNextModel;
-
     public static Intent newInstance(Context context){
 
         return new Intent(context,BackgroundNetwork.class);
-
-
     }
 
     public BackgroundNetwork() {
@@ -57,61 +66,23 @@ public class BackgroundNetwork extends IntentService implements NetWorkResponse 
     public void onStart(@Nullable Intent intent, int startId) {
         super.onStart(intent, startId);
 
-
-
-    }
-
-    private void getTimes(double lat, double lng){
-
-        Long tsLong = System.currentTimeMillis()/1000;
-        String ts = tsLong.toString();
-
-
-        Log.d("SHAREDPREFS LAT LNG", "  LAT  " +  lat + " LNG  " + lng);
-
-        String requestPath = NetworkRequest.BuildRequest(lat,lng,null);
-
-        NetworkRequest mRequest = new NetworkRequest(getApplicationContext());
-        mRequest.mResponse = this;
-        mRequest.requestPrayerTimeSingle(requestPath);
-
     }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         Log.d("BACKGROUND RECIEVE", "Received an intent: " + intent);
-       // PrayerNextModel nextModel  = TimesFragment.getNextPrayer(mServicePrayerModel);
-        if(!NetworkQueue.isConnected(getApplicationContext())){
-            setAlarm(getApplicationContext(),false,0,0);
-        } else {
-            double lat = intent.getDoubleExtra(KEY_LAT,0);
-            double lng = intent.getDoubleExtra(KEY_LNG,0);
+        // PrayerNextModel nextModel  = TimesFragment.getNextPrayer(mServicePrayerModel);
 
-            getTimes(lat,lng);
+        Bundle args = intent.getExtras();
 
+        String prayer = args.getString(KEY_PRAYER_STRING);
+        long time = args.getLong(KEY_PRAYER_TIME);
 
-        }
+        LazyLog.log("BACKGROUND NETWORK",prayer+" " + time);
 
-
-}
-
-    @Override
-    public void onDownloadedData(PrayerModel model) {
-        this.mServiceNextModel = TimesFragment.getNextPrayer(model);
-
-        long time = mServiceNextModel.getTimeUntilNextPrayer();
-        String prayer = mServiceNextModel.geteNextPrayer().toString();
-
-        if(time != 0){
-            fireNotifcation(prayer,time);
-
-        }
-
-
-        Log.d("SERVICE CALLBACK" , "   " + model.getFajr24());
+        fireNotifcation(prayer,time);
 
     }
-
     private void fireNotifcation(String prayer, long time){
 
         Resources resources = getResources();
@@ -122,7 +93,7 @@ public class BackgroundNetwork extends IntentService implements NetWorkResponse 
         Notification notification = new NotificationCompat.Builder(BackgroundNetwork.this,MY_NOTIFICATION_CHANNEL_ID).setTicker("my_ticker_0001")
                 .setSmallIcon(R.mipmap.ic_launcher_round)
                 .setContentTitle(resources.getString(R.string.notification_title))
-                .setContentText(prayer +" "+ "in" +" " + time)
+                .setContentText(prayer +" "+ "in" +" " + time + " " + "minutes")
                 .setAutoCancel(true)
                 .setContentIntent(pi)
                 .build();
@@ -131,19 +102,25 @@ public class BackgroundNetwork extends IntentService implements NetWorkResponse 
         manager.notify(0,notification);
     }
 
-
-    public static void setAlarm(Context c, boolean isOn,double lat, double lng){
+    public static void setAlarm(Context c, boolean isOn,PrayerModel model){
         //Create an alarm manager to start service
         //First create an intent to start the service
         //Wrap the intent into a pending intent so it can be used with AlarmManager
 
-
         Intent i = BackgroundNetwork.newInstance(c);
-        i.putExtra(KEY_LAT,lat);
-        i.putExtra(KEY_LNG,lng);
+
+        PrayerNextModel nextModel = TimesFragment.getNextPrayer(model);
+        String prayer = nextModel.geteNextPrayer().toString();
+        long time = nextModel.getTimeUntilNextPrayer();
+
+        LazyLog.log("ALARM", prayer +"" +time);
+
+
+        i.putExtra(KEY_PRAYER_STRING,prayer);
+        i.putExtra(KEY_PRAYER_TIME,time);
+
+
         PendingIntent pendingIntent = PendingIntent.getService(c,0,i,0);
-
-
 
         AlarmManager alarmManager = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
 

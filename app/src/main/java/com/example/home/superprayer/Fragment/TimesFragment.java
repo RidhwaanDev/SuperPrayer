@@ -34,6 +34,7 @@ import com.example.home.superprayer.Interface.NetWorkResponse;
 import com.example.home.superprayer.Network.NetworkQueue;
 import com.example.home.superprayer.Network.NetworkRequest;
 import com.example.home.superprayer.R;
+import com.example.home.superprayer.Util.LazyLog;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -56,15 +57,9 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
 
     private static final int MY_REQUEST_LOCATION_PERMISSION = 1000;
     private static final String MY_NOTIFICATION_CHANNEL_ID = "my_channel_id_0001";
-
     public static final String SHARED_PREFS_SERVICE_DATE = "shared_prefs_for_service_data";
     public static final String KEY_NEXT_TIME_SERVICE = "next_time_for_service";
     public static final String KEY_NEXT_PRAYER_SERVICE = "next_time_for_service";
-
-
-
-
-
     private static final int MY_NOTIFCATION_ID = 0;
 
     private TextView mFajrText,
@@ -86,14 +81,6 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_times_layout,container,false);
-
-       // SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
-      // double lat = prefs.getFloat(getString(R.string.lat_location),0);
-      //  double lng = prefs.getFloat(getString(R.string.lng_location),0);
-
-     //   startService(lat,lng);
-
-
 
         mFajrText =  v.findViewById(R.id.fajr_time_tv);
         mDuhrText =  v.findViewById(R.id.duhr_time_tv);
@@ -117,6 +104,11 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         mNetWorkQueue = NetworkQueue.getInstance(getActivity());
 
         updateTimes();
+
+        if(getCurrentModel()!=null){
+            PrayerModel modelForBackground = getCurrentModel();
+            startService(modelForBackground);
+        }
 
         return v;
     }
@@ -496,13 +488,12 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         }
     };
 
-    private void startService(double lat, double lng){
+    private void startService(PrayerModel model){
         // returns true if not exist ( hence ! )
         boolean doesPendingIntentExist = !BackgroundNetwork.isAlarmOn(getActivity());
-        BackgroundNetwork.setAlarm(getActivity(),doesPendingIntentExist, lat, lng);
+        BackgroundNetwork.setAlarm(getActivity(),doesPendingIntentExist, model);
 
     }
-
 
     @Override
     public void onResume() {
@@ -511,7 +502,6 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         updateTimes();
 
     }
-
 
     @Override
     public void onPause() {
@@ -524,8 +514,6 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         super.onDestroy();
         mNetWorkQueue = null;
     }
-
-
 }
 
 

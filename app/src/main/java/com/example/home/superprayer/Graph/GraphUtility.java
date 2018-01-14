@@ -22,10 +22,4 @@ public class GraphUtility {
     public static final float MIN = 0f;
     public static final int ANIM_DURATION = 750;
 
-
-
-
-
-
-
 }
