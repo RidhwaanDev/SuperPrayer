@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:title="Notifications"
+        android:key="@string/settings_pref_notification"
+        />
+
+    <ListPreference
+        android:defaultValue="1"
+        android:entries="@array/list_preference_entry_values_method"
+        android:entryValues="@array/list_preference_entry_values_method"
+        android:key="@string/settings_pref_method"
+        android:title="Method"
+        android:summary="Default method set to University of Islamic Sciences, Karachi"
+
+        />
+
+
+
+    <ListPreference
+        android:defaultValue="1"
+        android:entries="@array/list_preference_entry_values_method"
+        android:entryValues="@array/list_preference_entry_values_method"
+        android:key="@string/settings_pref_method"
+        android:summary="Default school set to Shafi"
+        android:title="School" />
+</PreferenceScreen>

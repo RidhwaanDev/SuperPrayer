@@ -28,9 +28,6 @@
     <string name="tv_retry_permission">Permission denied. App requires permission to be used. Tap to retry</string>
 
 
-
-
-
     <string name="string_not_yet_loaded">-- --</string>
     <string name="prayer_next_end"> All done for Today!</string>
 
@@ -61,29 +58,122 @@
     <string name="dialog_location_request_text">Location needed to get prayer times!</string>
     <string name="dialog_location_manual_option">Enter location manually.</string>
     <string name="dialog_location_reject_option"> Deny permission/location.</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <string name="settings_pref_notification">settings_pref_key_notifcation?</string>
+    <string name="settings_pref_method">settings_pref_key_method?</string>
+    <string name="settings_pref_school">settings_pref_key_school?</string>
 
 
 
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_social_recommendations">Enable social recommendations</string>
+    <string name="pref_description_social_recommendations">Recommendations for people to contact
+        based on your message history
+    </string>
+
+    <string name="pref_title_display_name">Display name</string>
+    <string name="pref_default_display_name">John Smith</string>
+
+    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+    <string-array name="pref_example_list_titles">
+        <item>Always</item>
+        <item>When possible</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_example_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">Data &amp; sync</string>
+
+    <string name="pref_title_sync_frequency">Sync frequency</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+    <string-array name="list_preference_entries_method">
+        <item>Entry 1</item>
+        <item>Entry 2</item>
+        <item>Entry 3</item>
+        <item>Entry 4</item>
+        <item>Entry 5</item>
+        <item>Entry 6</item>
+        <item>Entry 7</item>
+        <item>Entry 8</item>
+        <item>Entry 9</item>
+        <item>Entry 10</item>
+        <item>Entry 11</item>
+        <item>Entry 12</item>
+        <item>Entry 13</item>
+
+    </string-array>
+
+    <string-array name="list_preference_entry_values_method">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+
+    </string-array>
+
+    <string-array name="list_preference_entries_school">
+        <item>Entry 1</item>
+        <item>Entry 2</item>
+
+
+    </string-array>
+
+    <string-array name="list_preference_entry_values_school">
+        <item>1</item>
+        <item>2</item>
+
+    </string-array>
 
 
 
+    <string-array name="multi_select_list_preference_default_value" />
 
+    <string name="pref_title_system_sync_settings">System sync settings</string>
 
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
 
+    <string name="pref_title_new_message_notifications">New message notifications</string>
 
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
 
-
-
-
-
-
-
-
-
-
-
-
-
+    <string name="pref_title_vibrate">Vibrate</string>
 
 
 </resources>

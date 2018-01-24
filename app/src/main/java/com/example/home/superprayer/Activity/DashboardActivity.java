@@ -410,7 +410,17 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
         int menuID = item.getItemId();
 
         if(mToggle.onOptionsItemSelected(item)){
-            return true;
+            int id = item.getItemId();
+            switch (id){
+
+                case R.id.prayer_drawer_item:
+                    initfragment();
+                    return true;
+                case R.id.contact_drawer_item:
+
+                    return true;
+
+            }
         }
 
         switch (menuID){
