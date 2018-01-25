@@ -31,7 +31,13 @@
 
         <activity
             android:name=".Activity.SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
+            android:parentActivityName=".Activity.DashboardActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Activity.DashboardActivity" />
+        </activity>
+        <activity android:name=".Activity.Donate" />
+        <activity android:name=".Activity.About"></activity>
     </application>
 
 </manifest>

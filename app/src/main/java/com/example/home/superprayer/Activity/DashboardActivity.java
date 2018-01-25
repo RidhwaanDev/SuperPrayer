@@ -17,6 +17,7 @@ import android.net.wifi.WifiConfiguration;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -26,6 +27,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -37,14 +39,17 @@ import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.home.superprayer.Adapter.DrawerItemClickListener;
 import com.example.home.superprayer.Dialog.LocationRequestDialog;
 import com.example.home.superprayer.Dialog.PrayerDateDialogFragment;
 import com.example.home.superprayer.Fragment.CompassFragment;
 import com.example.home.superprayer.Fragment.LogFragment;
 import com.example.home.superprayer.Dialog.PrayerSearchDialogFragment;
+import com.example.home.superprayer.Fragment.SettingsFragment;
 import com.example.home.superprayer.Fragment.TimesFragment;
 import com.example.home.superprayer.Model.PrayerDateModel;
 import com.example.home.superprayer.Model.PrayerModel;
+import com.example.home.superprayer.Model.RequestParam;
 import com.example.home.superprayer.Network.NetworkQueue;
 import com.example.home.superprayer.R;
 import com.example.home.superprayer.Util.LocationUtil;
@@ -83,6 +88,8 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
     private static int CURRENT_FRAG = 0;
     private static final int LOCATION_UPDATE_INTERVAL = 0 * 120;
 
+
+
     // logic vars
     private LocationManager mLocationManager;
     private FusedLocationProviderClient mFusedLocation;
@@ -91,6 +98,7 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
     //view vars
     private BottomNavigationView mBottomNav;
     private DrawerLayout mDrawerNav;
+    private NavigationView mNavView;
     private ActionBarDrawerToggle mToggle;
     private Toolbar mToolBar;
     private RelativeLayout warningLayout;
@@ -101,7 +109,8 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
     private static final int PERMISSION_ERROR = 3;
 
     private boolean errorExists = false;
-
+    private Fragment currentFragment;
+    private RequestParam mRequestParam;
 
 
     @Override
@@ -109,17 +118,30 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        final String SETTINGS_NOTIFICATIONS_KEY = getString(R.string.settings_pref_notification);
+        final String SETTINGS_METHOD_KEY = getString(R.string.settings_pref_method);
+        final String SETTINGS_SCHOOL_KEY = getString(R.string.settings_pref_school);
+
+        mRequestParam = new RequestParam();
+        SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
+        int school = prefs.getInt(SETTINGS_METHOD_KEY,0);
+
+        Toast.makeText(this,"HELLO + " + school,Toast.LENGTH_SHORT).show();
+
+
              mToolBar = findViewById(R.id.nav_toolbar);
              setSupportActionBar(mToolBar);
 
 
              mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
              mFusedLocation = LocationServices.getFusedLocationProviderClient(this);
+             PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
 
-        mBottomNav = findViewById(R.id.bottom_navigation);
-        mBottomNav.setOnNavigationItemSelectedListener(listener);
-        mBottomNav.setVisibility(View.INVISIBLE);
+
+            mBottomNav = findViewById(R.id.bottom_navigation);
+            mBottomNav.setOnNavigationItemSelectedListener(listener);
+            mBottomNav.setVisibility(View.INVISIBLE);
 
              if(!isLocationPermissionExist()){
                  requestLocationPermission();
@@ -132,13 +154,44 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
              }
 
 
-
-
             mDrawerNav = findViewById(R.id.drawer_layout_id);
             mToggle = new ActionBarDrawerToggle(this,mDrawerNav,R.string.open,R.string.close);
 
             mDrawerNav.addDrawerListener(mToggle);
+
+
             mToggle.syncState();
+
+            mNavView = findViewById(R.id.navigation_view_drawer);
+            mNavView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                    int id = item.getItemId();
+                    switch (id){
+                        case R.id.prayer_drawer_item:
+                            mDrawerNav.closeDrawers();
+                            initfragment();
+                            return true;
+                        case R.id.contact_drawer_item:
+
+                            return true;
+                        case R.id.settings_drawer_item:
+
+                                mToolBar.setTitle(R.string.settings_title);
+                                mDrawerNav.closeDrawers();
+                                currentFragment = new SettingsFragment();
+                                FragmentTransaction fg = getSupportFragmentManager().beginTransaction();
+                                fg.replace(R.id.fragment_layout_id,currentFragment,"Settings");
+                                fg.commit();
+
+
+                            return true;
+                    }
+
+                    return false;
+                }
+            });
 
 
 
@@ -146,6 +199,8 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
+
+
 
     private void initfragment(){
 
@@ -409,20 +464,6 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
     public boolean onOptionsItemSelected(MenuItem item) {
         int menuID = item.getItemId();
 
-        if(mToggle.onOptionsItemSelected(item)){
-            int id = item.getItemId();
-            switch (id){
-
-                case R.id.prayer_drawer_item:
-                    initfragment();
-                    return true;
-                case R.id.contact_drawer_item:
-
-                    return true;
-
-            }
-        }
-
         switch (menuID){
 
             case R.id.search_prayer_menu_item:
@@ -565,7 +606,6 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             int itemId = item.getItemId();
 
-            Fragment currentFragment;
 
             switch (itemId) {
                 case R.id.action_prayer_times_frag:
@@ -591,7 +631,8 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
                     Log.d("VIEW PAGER", " HELLO ITS LOG ");
                     return true;
                 case R.id.action_compass_frag:
-                    currentFragment = new CompassFragment();
+                    //currentFragment = new CompassFragment();
+                    currentFragment = new SettingsFragment();
                     Log.d("VIEW PAGER", " HELLO ITS MOM ");
                     FragmentTransaction transaction3 = getSupportFragmentManager().beginTransaction();
                     transaction3.replace(R.id.fragment_layout_id, currentFragment, "Compass");

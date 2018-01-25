@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                android:key="@string/settings_pref_root_key"
 
-    <SwitchPreference
+    >
+    <android.support.v7.preference.SwitchPreferenceCompat
         android:defaultValue="true"
         android:title="Notifications"
         android:key="@string/settings_pref_notification"
+
         />
 
     <ListPreference
@@ -17,13 +20,11 @@
 
         />
 
-
-
     <ListPreference
         android:defaultValue="1"
-        android:entries="@array/list_preference_entry_values_method"
-        android:entryValues="@array/list_preference_entry_values_method"
-        android:key="@string/settings_pref_method"
+        android:entries="@array/list_preference_entry_values_school"
+        android:entryValues="@array/list_preference_entry_values_school"
+        android:key="@string/settings_pref_school"
         android:summary="Default school set to Shafi"
         android:title="School" />
 </PreferenceScreen>

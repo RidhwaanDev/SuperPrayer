@@ -126,6 +126,7 @@ public class BackgroundNetwork extends IntentService  {
 
         if(isOn){
             alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime(),TRUE_UPDATE,pendingIntent);
+
         } else {
             alarmManager.cancel(pendingIntent);
             pendingIntent.cancel();

@@ -14,6 +14,7 @@ import com.example.home.superprayer.Interface.ManualLocationResponse;
 import com.example.home.superprayer.Interface.NetWorkResponse;
 import com.example.home.superprayer.Model.ManualLocationModel;
 import com.example.home.superprayer.Model.PrayerModel;
+import com.example.home.superprayer.Model.RequestParam;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,6 +37,8 @@ public class NetworkRequest {
     public NetWorkResponse mResponse = null;
     public ManualLocationResponse mLocationResponse = null;
     private static final String ADDRESS_OBJ_KEY = "ADDRESS_OBJ_KEY_1_KEY";
+
+    private RequestParam mRequestParam;
 
     public NetworkRequest(Context context) {
         mQueue = Volley.newRequestQueue(context);
@@ -159,6 +162,10 @@ public class NetworkRequest {
 
     }
 
+
+
+
+
     public static String BuildRequest(double lat, double lng, String ts){
 
         //current time stamp
@@ -177,6 +184,30 @@ public class NetworkRequest {
                 .appendQueryParameter("longitude", String.valueOf(lng))
                 .appendQueryParameter("school","1")
                 .build();
+
+
+        return builder.toString();
+    }
+    public static String BuildRequestWithParam(double lat, double lng, String ts,RequestParam param){
+
+        //current time stamp
+
+        if(ts == null){
+            Long tsLong = System.currentTimeMillis()/1000;
+            ts = tsLong.toString();
+        }
+
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("http")
+                .authority(NetworkPaths.AUTHORITY_PATH)
+                .appendPath("timings")
+                .appendPath(ts)
+                .appendQueryParameter("latitude",String.valueOf(lat))
+                .appendQueryParameter("longitude", String.valueOf(lng))
+                .appendQueryParameter("school",String.valueOf(param.getMethod()))
+                .appendQueryParameter("method",String.valueOf(param.getSchool()))
+                .build();
+
 
         return builder.toString();
     }

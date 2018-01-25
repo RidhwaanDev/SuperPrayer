@@ -96,6 +96,7 @@
     </LinearLayout>
 
     <android.support.design.widget.NavigationView
+        android:id="@+id/navigation_view_drawer"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         app:menu="@menu/nav_drawer_menu"
