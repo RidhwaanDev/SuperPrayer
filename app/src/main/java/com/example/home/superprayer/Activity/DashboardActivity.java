@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.SettingInjectorService;
 import android.net.wifi.WifiConfiguration;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -122,26 +123,28 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
         final String SETTINGS_METHOD_KEY = getString(R.string.settings_pref_method);
         final String SETTINGS_SCHOOL_KEY = getString(R.string.settings_pref_school);
 
+
         mRequestParam = new RequestParam();
         SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
-        int school = prefs.getInt(SETTINGS_METHOD_KEY,0);
 
-        Toast.makeText(this,"HELLO + " + school,Toast.LENGTH_SHORT).show();
+        boolean shouldNotifiy = prefs.getBoolean(SETTINGS_NOTIFICATIONS_KEY,false);
+        int method = prefs.getInt(SETTINGS_METHOD_KEY,0);
+        int school = prefs.getInt(SETTINGS_SCHOOL_KEY,0);
 
+        Log.d("should notify? ", "   " + shouldNotifiy + "   " + method);
 
-             mToolBar = findViewById(R.id.nav_toolbar);
-             setSupportActionBar(mToolBar);
-
-
-             mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-             mFusedLocation = LocationServices.getFusedLocationProviderClient(this);
-             PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        mToolBar = findViewById(R.id.nav_toolbar);
+        setSupportActionBar(mToolBar);
 
 
+        mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        mFusedLocation = LocationServices.getFusedLocationProviderClient(this);
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
-            mBottomNav = findViewById(R.id.bottom_navigation);
-            mBottomNav.setOnNavigationItemSelectedListener(listener);
-            mBottomNav.setVisibility(View.INVISIBLE);
+
+        mBottomNav = findViewById(R.id.bottom_navigation);
+        mBottomNav.setOnNavigationItemSelectedListener(listener);
+        mBottomNav.setVisibility(View.INVISIBLE);
 
              if(!isLocationPermissionExist()){
                  requestLocationPermission();
@@ -178,12 +181,8 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
                             return true;
                         case R.id.settings_drawer_item:
 
-                                mToolBar.setTitle(R.string.settings_title);
-                                mDrawerNav.closeDrawers();
-                                currentFragment = new SettingsFragment();
-                                FragmentTransaction fg = getSupportFragmentManager().beginTransaction();
-                                fg.replace(R.id.fragment_layout_id,currentFragment,"Settings");
-                                fg.commit();
+                            Intent settingsIntent = new Intent(DashboardActivity.this,SettingsActivity.class);
+                            startActivity(settingsIntent);
 
 
                             return true;

@@ -7,8 +7,7 @@ import java.io.Serializable;
  */
 
 public class RequestParam implements Serializable {
-
-    private boolean isNotifcationsOn;
+      private boolean isNotifcationsOn;
         private int method;
         private int school;
 

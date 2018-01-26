@@ -115,13 +115,10 @@ public class BackgroundNetwork extends IntentService  {
 
         LazyLog.log("ALARM", prayer +"" +time);
 
-
         i.putExtra(KEY_PRAYER_STRING,prayer);
         i.putExtra(KEY_PRAYER_TIME,time);
 
-
         PendingIntent pendingIntent = PendingIntent.getService(c,0,i,0);
-
         AlarmManager alarmManager = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
 
         if(isOn){
