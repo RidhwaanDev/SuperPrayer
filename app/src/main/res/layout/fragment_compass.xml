@@ -1,0 +1,35 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+   >
+
+    <ImageView
+        android:id="@+id/compass_image"
+        android:layout_width="320dp"
+        android:layout_height="320dp"
+        android:layout_centerInParent="true"
+        android:src="@drawable/dial" />
+
+    <ImageView
+        android:id="@+id/main_image_hands"
+        android:layout_width="20dp"
+        android:layout_height="240dp"
+        android:layout_centerInParent="true"
+        android:scaleType="fitXY"
+        android:src="@drawable/hands" />
+
+
+    <TextView
+        android:id="@+id/compass_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/compass_image"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:gravity="center_horizontal"
+        android:text="32"
+        android:textColor="@color/colorMaghrib"
+        android:textSize="32dp" />
+
+</RelativeLayout>

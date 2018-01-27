@@ -44,6 +44,8 @@ dependencies {
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
     compile 'com.airbnb.android:lottie:2.5.0-beta1'
     compile 'com.android.support:preference-v7:26.1.0'
+    compile 'com.github.medyo:android-about-page:1.2.2'
+
 
 
 }

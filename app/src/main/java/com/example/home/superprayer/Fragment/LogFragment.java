@@ -62,12 +62,14 @@ public class LogFragment extends android.support.v4.app.Fragment implements View
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
         SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
 
         dbManager = DatabaseManager.getInstance(getActivity());
         mPrayerList = dbManager.getDBPrayers();
+
 
         boolean isFirstLaunch = prefs.getBoolean(getString(R.string.is_first_key), true);
         Log.d("db init test", "   " + isFirstLaunch);

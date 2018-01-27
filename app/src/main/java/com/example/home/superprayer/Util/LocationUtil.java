@@ -5,6 +5,7 @@ package com.example.home.superprayer.Util;
  */
 
 public class LocationUtil {
+
     private static final long ONE_HOUR = 1000 * 60 * 60;
 
     public static final long LOCATION_UPDATE_INTERVAL = ONE_HOUR * 6;

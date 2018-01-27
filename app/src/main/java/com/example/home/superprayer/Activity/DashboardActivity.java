@@ -36,6 +36,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.home.superprayer.Dialog.PrayerDateDialogFragment;
+import com.example.home.superprayer.Fragment.CompassFragment;
 import com.example.home.superprayer.Fragment.LogFragment;
 import com.example.home.superprayer.Dialog.PrayerSearchDialogFragment;
 import com.example.home.superprayer.Fragment.SettingsFragment;
@@ -156,13 +157,26 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
                             return true;
                         case R.id.contact_drawer_item:
 
-                            return true;
-                        case R.id.settings_drawer_item:
+                            Intent intent = new Intent(Intent.ACTION_SEND);
+                            intent.setType("text/plain");
+                            intent.putExtra(Intent.EXTRA_SUBJECT, "SuperPrayer App Contact");
+                            Intent mailer = Intent.createChooser(intent, null);
+                            startActivity(mailer);
 
+                            return true;
+
+                        case R.id.about_drawer_item:
+                            mToolBar.setTitle("About");
+                            Intent i = new Intent(DashboardActivity.this,About.class);
+                            startActivity(i);
+                            return true;
+
+                        case R.id.settings_drawer_item:
                             Intent settingsIntent = new Intent(DashboardActivity.this,SettingsActivity.class);
                             startActivity(settingsIntent);
 
-
+                        case R.id.donate_drawer_item:
+                            Toast.makeText(DashboardActivity.this,"Not accepting donations at the moment", Toast.LENGTH_SHORT).show();
                             return true;
                     }
 
@@ -591,7 +605,6 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
                     FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                     transaction.replace(R.id.fragment_layout_id, currentFragment, "Prayer Times");
                     transaction.commit();
-
                     CURRENT_FRAG = 1;
 
                     Log.d("VIEW PAGER", " HELLO ITS PRAYER ");
@@ -602,15 +615,15 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
                     FragmentTransaction transaction2 = getSupportFragmentManager().beginTransaction();
                     transaction2.replace(R.id.fragment_layout_id, currentFragment, "Prayer Log");
                     transaction2.commit();
-
+                    mToolBar.setTitle(R.string.log_frag);
                     CURRENT_FRAG = 2;
 
                     Log.d("VIEW PAGER", " HELLO ITS LOG ");
                     return true;
                 case R.id.action_compass_frag:
-                    //currentFragment = new CompassFragment();
-                    currentFragment = new SettingsFragment();
+                    currentFragment = new CompassFragment();
                     Log.d("VIEW PAGER", " HELLO ITS MOM ");
+                    mToolBar.setTitle(R.string.compass_frag);
                     FragmentTransaction transaction3 = getSupportFragmentManager().beginTransaction();
                     transaction3.replace(R.id.fragment_layout_id, currentFragment, "Compass");
                     transaction3.commit();

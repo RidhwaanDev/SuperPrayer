@@ -41,7 +41,16 @@
 
         </activity>
         <activity android:name=".Activity.Donate" />
-        <activity android:name=".Activity.About" />
+        <activity android:name=".Activity.About"
+            android:parentActivityName=".Activity.DashboardActivity">
+
+        >
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Activity.DashboardActivity"/>
+
+        </activity>
     </application>
 
 </manifest>
