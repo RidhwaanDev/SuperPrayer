@@ -13,15 +13,11 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.location.SettingInjectorService;
-import android.net.wifi.WifiConfiguration;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -36,21 +32,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.RelativeLayout;
-import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.home.superprayer.Adapter.DrawerItemClickListener;
-import com.example.home.superprayer.Dialog.LocationRequestDialog;
 import com.example.home.superprayer.Dialog.PrayerDateDialogFragment;
-import com.example.home.superprayer.Fragment.CompassFragment;
 import com.example.home.superprayer.Fragment.LogFragment;
 import com.example.home.superprayer.Dialog.PrayerSearchDialogFragment;
 import com.example.home.superprayer.Fragment.SettingsFragment;
 import com.example.home.superprayer.Fragment.TimesFragment;
 import com.example.home.superprayer.Model.PrayerDateModel;
 import com.example.home.superprayer.Model.PrayerModel;
-import com.example.home.superprayer.Model.RequestParam;
+import com.example.home.superprayer.Model.RequestModel;
 import com.example.home.superprayer.Network.NetworkQueue;
 import com.example.home.superprayer.R;
 import com.example.home.superprayer.Util.LocationUtil;
@@ -111,27 +103,13 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
 
     private boolean errorExists = false;
     private Fragment currentFragment;
-    private RequestParam mRequestParam;
+    private RequestModel mRequestParam;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        final String SETTINGS_NOTIFICATIONS_KEY = getString(R.string.settings_pref_notification);
-        final String SETTINGS_METHOD_KEY = getString(R.string.settings_pref_method);
-        final String SETTINGS_SCHOOL_KEY = getString(R.string.settings_pref_school);
-
-
-        mRequestParam = new RequestParam();
-        SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
-
-        boolean shouldNotifiy = prefs.getBoolean(SETTINGS_NOTIFICATIONS_KEY,false);
-        int method = prefs.getInt(SETTINGS_METHOD_KEY,0);
-        int school = prefs.getInt(SETTINGS_SCHOOL_KEY,0);
-
-        Log.d("should notify? ", "   " + shouldNotifiy + "   " + method);
 
         mToolBar = findViewById(R.id.nav_toolbar);
         setSupportActionBar(mToolBar);

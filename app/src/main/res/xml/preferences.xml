@@ -4,26 +4,26 @@
 
     >
     <android.support.v7.preference.SwitchPreferenceCompat
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:title="Notifications"
         android:key="@string/settings_pref_notification"
 
         />
 
     <ListPreference
-        android:defaultValue="1"
+        android:defaultValue="2"
         android:entries="@array/list_preference_entry_values_method"
-        android:entryValues="@array/list_preference_entry_values_method"
+        android:entryValues="@array/list_preference_entries_method"
         android:key="@string/settings_pref_method"
         android:title="Method"
-        android:summary="Default method set to University of Islamic Sciences, Karachi"
+        android:summary="Default method set to ISNA ( Islamic Society of North America )"
 
         />
 
     <ListPreference
         android:defaultValue="1"
         android:entries="@array/list_preference_entry_values_school"
-        android:entryValues="@array/list_preference_entry_values_school"
+        android:entryValues="@array/list_preference_entries_school"
         android:key="@string/settings_pref_school"
         android:summary="Default school set to Shafi"
         android:title="School" />

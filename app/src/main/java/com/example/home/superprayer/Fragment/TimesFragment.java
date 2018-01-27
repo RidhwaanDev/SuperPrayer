@@ -12,6 +12,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -29,6 +30,7 @@ import com.example.home.superprayer.Model.NextPrayerEnum;
 import com.example.home.superprayer.Model.PrayerDataBaseModel;
 import com.example.home.superprayer.Model.PrayerModel;
 import com.example.home.superprayer.Model.PrayerNextModel;
+import com.example.home.superprayer.Model.RequestModel;
 import com.example.home.superprayer.Network.BackgroundNetwork;
 import com.example.home.superprayer.Interface.NetWorkResponse;
 import com.example.home.superprayer.Network.NetworkQueue;
@@ -368,9 +370,21 @@ public class TimesFragment extends Fragment implements NetWorkResponse {
         lat = prefs.getFloat(getString(R.string.lat_location),0);
         lng = prefs.getFloat(getString(R.string.lng_location),0);
 
-        Log.d("SHAREDPREFS LAT LNG", "  LAT  " +  lat + " LNG  " + lng);
 
-        String requestPath = NetworkRequest.BuildRequest(lat,lng,null);
+      //  String requestPath = NetworkRequest.BuildRequest(lat,lng,null);
+
+        SharedPreferences setting_prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+        final String SETTINGS_NOTIFICATIONS_KEY = getString(R.string.settings_pref_notification);
+        final String SETTINGS_METHOD_KEY = getString(R.string.settings_pref_method);
+        final String SETTINGS_SCHOOL_KEY = getString(R.string.settings_pref_school);
+
+        boolean shouldNotifiy = setting_prefs.getBoolean(SETTINGS_NOTIFICATIONS_KEY,false);
+        String method =  setting_prefs.getString(SETTINGS_METHOD_KEY, "2");
+        String school = setting_prefs.getString(SETTINGS_SCHOOL_KEY,"0");
+
+        String requestPath = NetworkRequest.BuildRequestWithParam(lat,lng,ts,new RequestModel(shouldNotifiy,Integer.valueOf(method),Integer.valueOf(school)));
+        Log.d("REQUEST PATH", "   " + requestPath);
 
         NetworkRequest requestTimes = new NetworkRequest(getActivity());
         requestTimes.mResponse = this;

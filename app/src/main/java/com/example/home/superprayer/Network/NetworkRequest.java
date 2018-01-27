@@ -1,6 +1,7 @@
 package com.example.home.superprayer.Network;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Log;
 
@@ -14,7 +15,7 @@ import com.example.home.superprayer.Interface.ManualLocationResponse;
 import com.example.home.superprayer.Interface.NetWorkResponse;
 import com.example.home.superprayer.Model.ManualLocationModel;
 import com.example.home.superprayer.Model.PrayerModel;
-import com.example.home.superprayer.Model.RequestParam;
+import com.example.home.superprayer.Model.RequestModel;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,7 +39,7 @@ public class NetworkRequest {
     public ManualLocationResponse mLocationResponse = null;
     private static final String ADDRESS_OBJ_KEY = "ADDRESS_OBJ_KEY_1_KEY";
 
-    private RequestParam mRequestParam;
+    private RequestModel mRequestParam;
 
     public NetworkRequest(Context context) {
         mQueue = Volley.newRequestQueue(context);
@@ -163,12 +164,11 @@ public class NetworkRequest {
     }
 
 
-
-
-
     public static String BuildRequest(double lat, double lng, String ts){
 
         //current time stamp
+
+
 
         if(ts == null){
             Long tsLong = System.currentTimeMillis()/1000;
@@ -188,7 +188,7 @@ public class NetworkRequest {
 
         return builder.toString();
     }
-    public static String BuildRequestWithParam(double lat, double lng, String ts,RequestParam param){
+    public static String BuildRequestWithParam(double lat, double lng, String ts,RequestModel param){
 
         //current time stamp
 
@@ -204,8 +204,8 @@ public class NetworkRequest {
                 .appendPath(ts)
                 .appendQueryParameter("latitude",String.valueOf(lat))
                 .appendQueryParameter("longitude", String.valueOf(lng))
-                .appendQueryParameter("school",String.valueOf(param.getMethod()))
-                .appendQueryParameter("method",String.valueOf(param.getSchool()))
+                .appendQueryParameter("school",String.valueOf(param.getSchool()))
+                .appendQueryParameter("method",String.valueOf(param.getMethod()))
                 .build();
 
 
